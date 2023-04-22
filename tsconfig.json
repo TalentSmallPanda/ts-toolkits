@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    // "jsx": "react",
+    "target": "esnext",
+    "module": "esnext",
+    "rootDir": "./",
+    "moduleResolution": "node",
+    "paths": {},
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "declaration": false,
+    "outDir": "./dist",
+    "removeComments": true /* 删除注释 */,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}

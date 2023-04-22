@@ -1,0 +1,39 @@
+{
+  "name": "ts-tools",
+  "version": "1.0.0",
+  "description": "Common typescript tools",
+  "main": "index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development CONFIG_ENV=dev webpack serve",
+    "build": "rimraf dist && cross-env BABEL_ENV=esm rollup -c",
+    "update": "npm run patch && npm run build && npm publish",
+    "unpv": "npm unpublish mck-ui@<version>",
+    "unpf": "npm unpublish mck-ui -f",
+    "patch": "npm version patch",
+    "minor": "npm version minor",
+    "major": "npm version major",
+    "rbuild": "rimraf dist && tsc -declaration && cross-env NODE_ENV=production CONFIG_ENV=dev webpack --config webpack.build.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "7.21.4",
+    "@babel/preset-env": "7.21.4",
+    "@babel/preset-typescript": "7.21.4",
+    "@rollup/plugin-babel": "6.0.3",
+    "@rollup/plugin-commonjs": "24.1.0",
+    "@rollup/plugin-json": "6.0.0",
+    "@rollup/plugin-node-resolve": "15.0.2",
+    "cross-env": "7.0.3",
+    "fs": "0.0.1-security",
+    "path": "0.12.7",
+    "rimraf": "5.0.0",
+    "rollup": "3.20.7",
+    "rollup-plugin-dts": "5.3.0",
+    "rollup-plugin-peer-deps-external": "2.2.4",
+    "rollup-plugin-typescript2": "0.34.1",
+    "typescript": "5.0.4"
+  }
+}
