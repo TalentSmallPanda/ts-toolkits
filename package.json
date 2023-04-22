@@ -1,14 +1,19 @@
 {
-  "name": "ts-tools",
-  "version": "1.0.0",
-  "description": "Common typescript tools",
-  "main": "index.js",
+  "name": "ts-toolkit",
+  "version": "1.0.2",
+  "description": "Common typescript toolkit",
+  "main": "dist/index.js",
+  "types": "dist/type/src/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "source": "./index.ts",
   "scripts": {
     "start": "cross-env NODE_ENV=development CONFIG_ENV=dev webpack serve",
     "build": "rimraf dist && cross-env BABEL_ENV=esm rollup -c",
     "update": "npm run patch && npm run build && npm publish",
-    "unpv": "npm unpublish mck-ui@<version>",
-    "unpf": "npm unpublish mck-ui -f",
+    "unpv": "npm unpublish ts-toolkit@<version>",
+    "unpf": "npm unpublish ts-toolkit -f",
     "patch": "npm version patch",
     "minor": "npm version minor",
     "major": "npm version major",
