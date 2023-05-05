@@ -1,5 +1,6 @@
 import { NumberUtils } from "./number.utils";
 import { ObjectUtils } from "./object.utils";
+import { EmptyArray, NotEmptyArray } from "./type";
 
 export class ArrayUtils {
   /**
@@ -14,7 +15,7 @@ export class ArrayUtils {
    * @example ArrayUtils.isEmtpy("string") throw error;
    * @example ArrayUtils.isEmtpy(123) throw error;
    */
-  public static isEmpty<T>(array: T[] | undefined | null): boolean {
+  public static isEmpty<T>(array: T[] | undefined | null): array is EmptyArray {
     if (ObjectUtils.isNullOrUndefined(array)) {
       return true;
     }
@@ -37,7 +38,9 @@ export class ArrayUtils {
    * @example ArrayUtils.isNotEmpty("string") throw error;
    * @example ArrayUtils.isNotEmpty(123) throw error;
    */
-  public static isNotEmpty<T>(array: T[] | undefined | null): boolean {
+  public static isNotEmpty<T>(
+    array: T[] | undefined | null
+  ): array is NotEmptyArray<T> {
     return !this.isEmpty(array);
   }
 
@@ -180,7 +183,6 @@ export class ArrayUtils {
     const length = array.length;
     let useStartIndex: number;
     if (ObjectUtils.isNullOrUndefined(n) || isNaN(n)) {
-      // default value is 1
       useStartIndex = length - 1;
     } else if (n < 0) {
       useStartIndex = length;

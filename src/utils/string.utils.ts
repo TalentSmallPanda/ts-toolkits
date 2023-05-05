@@ -1,7 +1,7 @@
 import { ArrayUtils } from "./array.utils";
 import { NumberUtils } from "./number.utils";
 import { ObjectUtils } from "./object.utils";
-import { NullOrUndefinedType, StrValueType } from "./type";
+import { BlankString, Nullable, NullableString } from "./type";
 
 export class StringUtils {
   public static readonly EMPTY: string = "";
@@ -17,7 +17,7 @@ export class StringUtils {
    * @example StringUtils.isEmpty("bob")     = false
    * @example StringUtils.isEmpty("  bob  ") = false
    */
-  public static isEmpty(str: StrValueType): boolean {
+  public static isEmpty(str: NullableString): str is Nullable {
     return ObjectUtils.isNullOrUndefined(str) || str.length === 0;
   }
 
@@ -31,7 +31,7 @@ export class StringUtils {
    * @example StringUtils.isNotEmpty("bob")     = true
    * @example StringUtils.isNotEmpty("  bob  ") = true
    */
-  public static isNotEmpty(str: StrValueType): boolean {
+  public static isNotEmpty(str: NullableString): str is string {
     return !this.isEmpty(str);
   }
 
@@ -45,7 +45,7 @@ export class StringUtils {
    * @example StringUtils.isBlank("bob")     = false
    * @example StringUtils.isBlank("  bob  ") = false
    */
-  public static isBlank(str: StrValueType): str is NullOrUndefinedType {
+  public static isBlank(str: NullableString): str is BlankString {
     return ObjectUtils.isNullOrUndefined(str) || str.trim() === this.EMPTY;
   }
 
@@ -59,7 +59,7 @@ export class StringUtils {
    * @example StringUtils.isNotBlank("bob")     = true
    * @example StringUtils.isNotBlank("  bob  ") = true
    */
-  public static isNotBlank(str: StrValueType): str is string {
+  public static isNotBlank(str: NullableString): str is string {
     return !this.isBlank(str);
   }
 
@@ -398,8 +398,6 @@ export class StringUtils {
     if (!ObjectUtils.isString(str) || !ObjectUtils.isString(prefix)) {
       return false;
     }
-    // return str.indexOf(prefix) === 0;
-    // according to https://leonax.net/p/5806/use-string-startswith-and-endswith-in-javascript/
     return str.slice(0, prefix.length) === prefix;
   }
 

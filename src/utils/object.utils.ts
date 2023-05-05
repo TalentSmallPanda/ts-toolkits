@@ -1,5 +1,5 @@
 import { ArrayUtils } from "..";
-import { NullOrUndefinedType } from "./type";
+import { Nullable } from "./type";
 
 export class ObjectUtils {
   /**
@@ -10,7 +10,7 @@ export class ObjectUtils {
    * @example ObjectUtils.isNull({})          = false
    * @example ObjectUtils.isNull(1)           = false
    */
-  public static isNull(value: any): boolean {
+  public static isNull(value: any): value is null {
     return value === null;
   }
 
@@ -22,7 +22,7 @@ export class ObjectUtils {
    * @example ObjectUtils.isUndefinend({})          = false
    * @example ObjectUtils.isUndefinend(1)           = false
    */
-  public static isUndefinend(value: any): boolean {
+  public static isUndefinend(value: any): value is undefined {
     return typeof value === "undefined";
   }
 
@@ -34,7 +34,7 @@ export class ObjectUtils {
    * @example ObjectUtils.isNullOrUndefined({})          = false
    * @example ObjectUtils.isNullOrUndefined(1)           = false
    */
-  public static isNullOrUndefined<T>(value: any): value is NullOrUndefinedType {
+  public static isNullOrUndefined<T>(value: any): value is Nullable {
     return this.isNull(value) || this.isUndefinend(value);
   }
 
@@ -46,7 +46,7 @@ export class ObjectUtils {
    * @example ObjectUtils.isArray(undefinend)   = false
    * @example ObjectUtils.isArray(1)            = false
    */
-  public static isArray(value: any): boolean {
+  public static isArray(value: any): value is Array<any> {
     return value instanceof Array;
   }
 
@@ -58,7 +58,7 @@ export class ObjectUtils {
    * @example ObjectUtils.isDate(undefinend)   = false
    * @example ObjectUtils.isDate(1)            = false
    */
-  public static isDate(value: any): boolean {
+  public static isDate(value: any): value is Date {
     return value instanceof Date;
   }
 
@@ -228,7 +228,7 @@ export class ObjectUtils {
    * @example ObjectUtils.hasValue(undefined)   = false
    * @example ObjectUtils.hasValue(null)        = false
    */
-  public static hasValue<T>(object: T): object is T {
+  public static hasValue<T>(object: T): object is NonNullable<T> {
     return !this.isNullOrUndefined(object);
   }
 }
