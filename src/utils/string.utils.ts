@@ -519,7 +519,7 @@ export class StringUtils {
       return "";
     }
     const useSeparator = this.isEmpty(separator) ? "" : separator;
-    let result: string;
+    let result = "";
     for (let index = 0; index < array.length; index++) {
       const element = array[index] + "";
       if (index === 0) {

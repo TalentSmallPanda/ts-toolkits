@@ -34,7 +34,7 @@ export class ObjectUtils {
    * @example ObjectUtils.isNullOrUndefined({})          = false
    * @example ObjectUtils.isNullOrUndefined(1)           = false
    */
-  public static isNullOrUndefined<T>(value: any): value is Nullable {
+  public static isNullOrUndefined(value: any): value is Nullable {
     return this.isNull(value) || this.isUndefinend(value);
   }
 
@@ -141,7 +141,7 @@ export class ObjectUtils {
    */
   public static createObject<T>(type: new () => T): T {
     if (this.isNullOrUndefined(type)) {
-      return null;
+      return Object.create(type);
     }
     return new type();
   }
