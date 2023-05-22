@@ -25,10 +25,7 @@ export class HttpUtils {
   }
 
   // solve a=1[;|&]b=2[;|&]c=3
-  private static getParams(
-    paramStr: string,
-    splitChar: string
-  ): { [key: string]: string } {
+  private static getParams(paramStr: string, splitChar: string): { [key: string]: string } {
     const result: { [key: string]: string } = {};
     if (!ObjectUtils.isString(paramStr) || !ObjectUtils.isString(splitChar)) {
       return result;

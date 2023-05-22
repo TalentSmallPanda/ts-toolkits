@@ -1,4 +1,3 @@
-import { NumberUtils } from "./number.utils";
 import { ObjectUtils } from "./object.utils";
 
 export class DateUtils {
@@ -57,9 +56,7 @@ export class DateUtils {
    * "S" Milliseconds; no leading zero for single-digit seconds.
    */
   public static toString(date: Date, format: string): string {
-    return format.replace(this.timeFormatRegex, matched =>
-      this.getTimeFormat(false, date, matched)
-    );
+    return format.replace(this.timeFormatRegex, (matched) => this.getTimeFormat(false, date, matched));
   }
 
   /**
@@ -83,9 +80,7 @@ export class DateUtils {
    * "S" Milliseconds; no leading zero for single-digit seconds.
    */
   public static toUTCString(date: Date, format: string): string {
-    return format.replace(this.timeFormatRegex, matched =>
-      this.getTimeFormat(true, date, matched)
-    );
+    return format.replace(this.timeFormatRegex, (matched) => this.getTimeFormat(true, date, matched));
   }
 
   /**
@@ -110,27 +105,17 @@ export class DateUtils {
     }
   }
 
-  // tslint:disable-next-line: cognitive-complexity
-  private static getTimeFormat(
-    isUTC: boolean,
-    date: Date,
-    formatKey: string
-  ): string {
+  private static getTimeFormat(isUTC: boolean, date: Date, formatKey: string): string {
     switch (formatKey) {
       case "yyyy":
         return (isUTC ? date.getUTCFullYear() : date.getFullYear()).toString();
       case "yy":
-        return (isUTC ? date.getUTCFullYear() : date.getFullYear())
-          .toString()
-          .substr(2);
+        return (isUTC ? date.getUTCFullYear() : date.getFullYear()).toString().substr(2);
       case "MM":
         const month = isUTC ? date.getUTCMonth() + 1 : date.getMonth() + 1;
         return month >= 10 ? month.toString() : `0${month}`;
       case "M":
-        return (isUTC
-          ? date.getUTCMonth() + 1
-          : date.getMonth() + 1
-        ).toString();
+        return (isUTC ? date.getUTCMonth() + 1 : date.getMonth() + 1).toString();
       case "dd":
         const day = isUTC ? date.getUTCDate() : date.getDate();
         return day >= 10 ? day.toString() : `0${day}`;
@@ -152,19 +137,14 @@ export class DateUtils {
       case "s":
         return (isUTC ? date.getUTCSeconds() : date.getSeconds()).toString();
       case "SSS":
-        const milliseconds = isUTC
-          ? date.getUTCMilliseconds()
-          : date.getMilliseconds();
+        const milliseconds = isUTC ? date.getUTCMilliseconds() : date.getMilliseconds();
         return milliseconds >= 100
           ? milliseconds.toString()
           : milliseconds >= 10
-            ? `0${milliseconds}`
-            : `00${milliseconds}`;
+          ? `0${milliseconds}`
+          : `00${milliseconds}`;
       case "S":
-        return (isUTC
-          ? date.getUTCMilliseconds()
-          : date.getMilliseconds()
-        ).toString();
+        return (isUTC ? date.getUTCMilliseconds() : date.getMilliseconds()).toString();
       default:
         return "";
     }

@@ -5,11 +5,4 @@ import { NumberUtils } from "./utils/number.utils";
 import { ObjectUtils } from "./utils/object.utils";
 import { StringUtils } from "./utils/string.utils";
 
-export {
-  ObjectUtils,
-  StringUtils,
-  NumberUtils,
-  DateUtils,
-  HttpUtils,
-  ArrayUtils,
-};
+export { ObjectUtils, StringUtils, NumberUtils, DateUtils, HttpUtils, ArrayUtils };

@@ -108,7 +108,7 @@ export class ObjectUtils {
    * @example ObjectUtils.toSafeString(null, "--")      = "--"
    * @example ObjectUtils.toSafeString(undefined, "--") = "--"
    */
-  public static toSafeString(value: any, defaultValue: string = ""): string {
+  public static toSafeString(value: any, defaultValue = ""): string {
     if (this.isNullOrUndefined(value)) {
       return defaultValue;
     } else {
@@ -131,11 +131,7 @@ export class ObjectUtils {
    * @param key
    * @param value
    */
-  public static setProperty<T, K extends keyof T>(
-    obj: T,
-    key: K,
-    value: T[K]
-  ): void {
+  public static setProperty<T, K extends keyof T>(obj: T, key: K, value: T[K]): void {
     obj[key] = value;
   }
 
@@ -177,10 +173,7 @@ export class ObjectUtils {
    * @example ObjectUtils.getDescendantProperty(undefined)                  = undefined
    * @example ObjectUtils.getDescendantProperty(null)                       = undefined
    */
-  public static getDescendantProperty(
-    obj: any,
-    ...descendantPaths: string[]
-  ): NonNullable<any> | undefined {
+  public static getDescendantProperty(obj: any, ...descendantPaths: string[]): NonNullable<any> | undefined {
     if (this.isNullOrUndefined(obj)) {
       return undefined;
     }
@@ -208,10 +201,7 @@ export class ObjectUtils {
    * @example ObjectUtils.getOrDefault<number | null>(1, 0)                 = "1"
    * @example ObjectUtils.getOrDefault<number | null>(null, 0)              = "0"
    */
-  public static getOrDefault<T>(
-    value: T,
-    defaultValue: NonNullable<T>
-  ): NonNullable<T> {
+  public static getOrDefault<T>(value: T, defaultValue: NonNullable<T>): NonNullable<T> {
     if (ObjectUtils.isNullOrUndefined(value)) {
       return defaultValue;
     } else {

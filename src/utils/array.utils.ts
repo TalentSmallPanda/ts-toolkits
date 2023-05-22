@@ -38,9 +38,7 @@ export class ArrayUtils {
    * @example ArrayUtils.isNotEmpty("string") throw error;
    * @example ArrayUtils.isNotEmpty(123) throw error;
    */
-  public static isNotEmpty<T>(
-    array: T[] | undefined | null
-  ): array is NotEmptyArray<T> {
+  public static isNotEmpty<T>(array: T[] | undefined | null): array is NotEmptyArray<T> {
     return !this.isEmpty(array);
   }
 
@@ -99,11 +97,7 @@ export class ArrayUtils {
    * @example ArrayUtils.insert([1, 2], 100, 4) = false // greater than array.length.
    */
   public static insert<T>(array: T[], index: number, item: T): boolean {
-    if (
-      !ObjectUtils.isArray(array) ||
-      !NumberUtils.isSafeInteger(index) ||
-      index > array.length
-    ) {
+    if (!ObjectUtils.isArray(array) || !NumberUtils.isSafeInteger(index) || index > array.length) {
       return false;
     }
     const oldCount = array.length;

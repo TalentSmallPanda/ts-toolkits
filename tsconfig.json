@@ -10,9 +10,10 @@
     "declaration": false,
     "outDir": "./dist",
     "removeComments": true /* 删除注释 */,
+    "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }

@@ -23,11 +23,7 @@ export class NumberUtils {
    * @example Number.isInteger([1]);       // false
    */
   public static isInteger(value: any): boolean {
-    return (
-      ObjectUtils.isNumber(value) &&
-      isFinite(value) &&
-      Math.floor(value) === value
-    );
+    return ObjectUtils.isNumber(value) && isFinite(value) && Math.floor(value) === value;
   }
 
   /**
@@ -50,7 +46,7 @@ export class NumberUtils {
    * Returns a string representing a number in fixed-point notation.
    * @param value target value.
    * @param fractionDigits Number of digits after the decimal point. Must be in the range 0 - 20, inclusive.
-   * @param defaultValue default value if value is empty. 
+   * @param defaultValue default value if value is empty.
    */
   public static toFixed(value: number | null | undefined, fractionDigits: number, defaultValue?: string): string {
     if (ObjectUtils.isNullOrUndefined(value)) {

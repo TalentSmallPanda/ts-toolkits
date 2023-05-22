@@ -89,7 +89,7 @@ export class StringUtils {
    * @example StringUtils.trimToNull("    ")           = null
    * @example StringUtils.trimToNull(" a   ")          = "a"
    */
-  public static trimToNull(str: string): string {
+  public static trimToNull(str: string): null | string {
     if (ObjectUtils.isNullOrUndefined(str)) {
       return null;
     }
@@ -119,7 +119,7 @@ export class StringUtils {
    * @param str
    * @param stripChars
    */
-  public static strip(str: string, stripChars?: string): string {
+  public static strip(str: string | null, stripChars?: string): string | null {
     const tmp = this.stripStart(str, stripChars);
     return this.stripEnd(tmp, stripChars);
   }
@@ -128,7 +128,7 @@ export class StringUtils {
    * Strips whitespace from the start and end of a String returning null if the String is empty ("") after the strip.
    * @param str
    */
-  public static stripToNull(str: string): string {
+  public static stripToNull(str: string): string | null {
     if (ObjectUtils.isNullOrUndefined(str)) {
       return null;
     }
@@ -161,7 +161,7 @@ export class StringUtils {
    * @example StringUtils.stripStart(" abc ", null)    = "abc "
    * @example StringUtils.stripStart("yxabc  ", "xyz") = "abc  "
    */
-  public static stripStart(str: string, stripChars: string): string {
+  public static stripStart(str: string | null, stripChars?: string): string | null {
     if (ObjectUtils.isNullOrUndefined(str) || str.length === 0) {
       return str;
     }
@@ -194,7 +194,7 @@ export class StringUtils {
    * @example StringUtils.stripEnd(" abc ", null)    = " abc"
    * @example StringUtils.stripEnd("  abcyx", "xyz") = "  abc"
    */
-  public static stripEnd(str: string, stripChars: string): string {
+  public static stripEnd(str: string | null, stripChars?: string): string | null {
     if (ObjectUtils.isNullOrUndefined(str) || str.length === 0) {
       return str;
     }
@@ -229,10 +229,7 @@ export class StringUtils {
    * @example StringUtils.equal("abc", "abc")            = true
    */
   public static equals(str1: string, str2: string): boolean {
-    if (
-      !ObjectUtils.isNullOrUndefined(str1) &&
-      !ObjectUtils.isNullOrUndefined(str2)
-    ) {
+    if (!ObjectUtils.isNullOrUndefined(str1) && !ObjectUtils.isNullOrUndefined(str2)) {
       return str1 === str2;
     }
     if (ObjectUtils.isNull(str1) && ObjectUtils.isNull(str2)) {
@@ -261,10 +258,7 @@ export class StringUtils {
    * @example StringUtils.equal("abc", "AbC")            = true
    */
   public static equalsIgnoreCase(str1: string, str2: string): boolean {
-    if (
-      !ObjectUtils.isNullOrUndefined(str1) &&
-      !ObjectUtils.isNullOrUndefined(str2)
-    ) {
+    if (!ObjectUtils.isNullOrUndefined(str1) && !ObjectUtils.isNullOrUndefined(str2)) {
       return str1.toLocaleLowerCase() === str2.toLocaleLowerCase();
     }
     if (ObjectUtils.isNull(str1) && ObjectUtils.isNull(str2)) {
@@ -289,16 +283,11 @@ export class StringUtils {
    * @example StringUtils.indexOf("aabaabaa", 'b', 3) = 5
    * @example StringUtils.indexOf("aabaabaa", '') = 0
    */
-  public static indexOf(
-    str: string,
-    searchStr: string,
-    startPos?: number
-  ): number {
+  public static indexOf(str: string, searchStr: string, startPos?: number): number {
     if (
       ObjectUtils.isNullOrUndefined(str) ||
       ObjectUtils.isNullOrUndefined(searchStr) ||
-      (!ObjectUtils.isUndefinend(startPos) &&
-        !NumberUtils.isSafeInteger(startPos))
+      (!ObjectUtils.isUndefinend(startPos) && !NumberUtils.isSafeInteger(startPos))
     ) {
       return this.INDEX_NOT_FOUND;
     }
@@ -316,22 +305,15 @@ export class StringUtils {
    * @example StringUtils.lastIndexOf("aabaabaa", "b");      =5
    * @example StringUtils.lastIndexOf("aabaabaa", "b", 4);   =2
    */
-  public static lastIndexOf(
-    str: string,
-    searchStr: string,
-    position?: number
-  ): number {
+  public static lastIndexOf(str: string, searchStr: string, position?: number): number {
     if (
       ObjectUtils.isNullOrUndefined(str) ||
       ObjectUtils.isNullOrUndefined(searchStr) ||
-      (!ObjectUtils.isUndefinend(position) &&
-        !NumberUtils.isSafeInteger(position))
+      (!ObjectUtils.isUndefinend(position) && !NumberUtils.isSafeInteger(position))
     ) {
       return this.INDEX_NOT_FOUND;
     }
-    const usePosition = ObjectUtils.isUndefinend(position)
-      ? str.length - 1
-      : position;
+    const usePosition = ObjectUtils.isUndefinend(position) ? str.length - 1 : position;
     return str.lastIndexOf(searchStr, usePosition);
   }
 
@@ -355,9 +337,7 @@ export class StringUtils {
    */
   public static containsIgnoreCase(str: string, searchStr: string): boolean {
     if (ObjectUtils.isString(str) && ObjectUtils.isString(searchStr)) {
-      return (
-        str.toLocaleLowerCase().indexOf(searchStr.toLocaleLowerCase()) >= 0
-      );
+      return str.toLocaleLowerCase().indexOf(searchStr.toLocaleLowerCase()) >= 0;
     } else {
       return false;
     }
@@ -369,7 +349,7 @@ export class StringUtils {
    * @param start
    * @param end
    */
-  public static subString(str: string, start: number, end?: number): string {
+  public static subString(str: string, start: number, end?: number): string | null {
     if (
       !ObjectUtils.isString(str) ||
       !NumberUtils.isSafeInteger(start) ||
@@ -516,23 +496,12 @@ export class StringUtils {
    * @example StringUtils.replaceAll(" ", " ", "a")    = "a";
    * @example StringUtils.replaceAll("aa", "a", "b")    = "bb";
    */
-  public static replaceAll(
-    str: string,
-    searchValue: string,
-    replacer: string
-  ): string {
-    if (
-      !ObjectUtils.isString(str) ||
-      !ObjectUtils.isString(searchValue) ||
-      !ObjectUtils.isString(replacer)
-    ) {
+  public static replaceAll(str: string, searchValue: string, replacer: string): string {
+    if (!ObjectUtils.isString(str) || !ObjectUtils.isString(searchValue) || !ObjectUtils.isString(replacer)) {
       return str;
     }
 
-    return str.replace(
-      new RegExp(this.escapeRegExp(searchValue), "g"),
-      replacer
-    );
+    return str.replace(new RegExp(this.escapeRegExp(searchValue), "g"), replacer);
   }
 
   /**
@@ -545,7 +514,7 @@ export class StringUtils {
    * @example StringUtils.join(["a", "b", "c"], "-")  = "a-b-c"
    * @example StringUtils.join([1, 2, 3], "-")  = "1-2-3"
    */
-  public static join<T>(array: T[], separator: string = "") {
+  public static join<T>(array: T[], separator = "") {
     if (ArrayUtils.isEmpty(array)) {
       return "";
     }
