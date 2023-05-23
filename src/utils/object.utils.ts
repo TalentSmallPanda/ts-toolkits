@@ -139,11 +139,11 @@ export class ObjectUtils {
    * create object by type.
    * @param type
    */
-  public static createObject<T>(type: new () => T): T {
+  public static createObject<T>(type: new (...args: any) => T, ...args: any): T {
     if (this.isNullOrUndefined(type)) {
-      return Object.create(type);
+      return Object.create(null);
     }
-    return new type();
+    return new type(...args);
   }
 
   /**
