@@ -1,7 +1,7 @@
 import { ArrayUtils } from "..";
 import { Nullable } from "./type";
 
-export class ObjectUtils {
+export default class ObjectUtils {
   /**
    * check whether value is null.
    * @param value

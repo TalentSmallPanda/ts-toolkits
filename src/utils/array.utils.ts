@@ -1,8 +1,8 @@
-import { NumberUtils } from "./number.utils";
-import { ObjectUtils } from "./object.utils";
+import NumberUtils from "./number.utils";
+import ObjectUtils from "./object.utils";
 import { EmptyArray, NotEmptyArray } from "./type";
 
-export class ArrayUtils {
+export default class ArrayUtils {
   /**
    * check whether current array is empty or null/undefined.
    * @param array

@@ -1,6 +1,6 @@
-import { ObjectUtils } from "./object.utils";
+import ObjectUtils from "./object.utils";
 
-export class DateUtils {
+export default class DateUtils {
   private static timeFormatRegex = /yyyy|yy|MM|M|dd|d|HH|H|mm|m|ss|s|SSS|S/g;
 
   /**

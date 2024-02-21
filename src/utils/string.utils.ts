@@ -1,9 +1,9 @@
-import { ArrayUtils } from "./array.utils";
-import { NumberUtils } from "./number.utils";
-import { ObjectUtils } from "./object.utils";
+import ArrayUtils from "./array.utils";
+import NumberUtils from "./number.utils";
+import ObjectUtils from "./object.utils";
 import { BlankString, Nullable, NullableString } from "./type";
 
-export class StringUtils {
+export default class StringUtils {
   public static readonly EMPTY: string = "";
   public static readonly INDEX_NOT_FOUND: number = -1;
 

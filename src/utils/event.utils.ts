@@ -1,6 +1,6 @@
-import { ObjectUtils } from "./object.utils";
+import ObjectUtils from "./object.utils";
 
-export class EventUtils {
+export default class EventUtils {
   /**
    * Bind a listener event to the evt and return a destroyed event
    * @param evt

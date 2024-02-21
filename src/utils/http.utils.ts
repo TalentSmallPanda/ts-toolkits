@@ -1,6 +1,6 @@
-import { ObjectUtils } from "./object.utils";
+import ObjectUtils from "./object.utils";
 
-export class HttpUtils {
+export default class HttpUtils {
   /**
    * Get all cookie values from cookie string;
    * @param cookie

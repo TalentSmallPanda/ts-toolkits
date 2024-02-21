@@ -7,6 +7,7 @@ import typescript from "rollup-plugin-typescript2";
 import json from "@rollup/plugin-json";
 import babel from "@rollup/plugin-babel";
 import dts from "rollup-plugin-dts";
+// import umd from "rollup-plugin-umd";
 
 // 入口
 const entry = "src/index.ts";
@@ -36,10 +37,7 @@ const commonPlugins = [
 ];
 
 // 忽略文件
-const externalConfig = [
-  (id) => /\/__expample__|main.tsx/.test(id),
-  "**/node_modules/**",
-];
+const externalConfig = [(id) => /\/__expample__|main.tsx/.test(id), "**/node_modules/**"];
 
 // ES Module打包输出
 const esmOutput = {
