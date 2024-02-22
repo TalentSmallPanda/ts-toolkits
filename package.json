@@ -10,7 +10,7 @@
   "source": "./index.ts",
   "scripts": {
     "start": "cross-env NODE_ENV=development CONFIG_ENV=dev webpack serve",
-    "build": "rimraf dist && cross-env BABEL_ENV=esm rollup -c",
+    "build": "rimraf dist && cross-env BABEL_ENV=umd rollup -c",
     "pub": "npm publish",
     "update": "npm run patch && npm run build && npm publish",
     "unpv": "npm unpublish ts-toolkits@<version>",
@@ -51,6 +51,7 @@
     "rollup": "3.20.7",
     "rollup-plugin-dts": "5.3.0",
     "rollup-plugin-peer-deps-external": "2.2.4",
+    "rollup-plugin-terser": "7.0.2",
     "rollup-plugin-typescript2": "0.34.1",
     "ts-jest": "29.1.1",
     "typescript": "5.0.4"

@@ -7,7 +7,7 @@ import typescript from "rollup-plugin-typescript2";
 import json from "@rollup/plugin-json";
 import babel from "@rollup/plugin-babel";
 import dts from "rollup-plugin-dts";
-// import umd from "rollup-plugin-umd";
+import { terser } from "rollup-plugin-terser";
 
 // 入口
 const entry = "src/index.ts";
@@ -42,9 +42,22 @@ const externalConfig = [(id) => /\/__expample__|main.tsx/.test(id), "**/node_mod
 // ES Module打包输出
 const esmOutput = {
   preserveModules: true,
-  assetFileNames: () => {
-    return "[name].[ext]";
-  },
+  // assetFileNames: () => {
+  //   return "[name].[ext]";
+  // },
+  dir: "dist/",
+};
+
+const cjsOutput = {
+  preserveModules: true,
+  dir: "dist/",
+  format: "cjs",
+};
+
+const umdOutput = {
+  format: "umd",
+  file: "dist/index.js",
+  name: "index",
 };
 
 export default () => {
@@ -60,6 +73,39 @@ export default () => {
         {
           input: [entry, ...componentsEntry],
           output: { ...esmOutput, dir: "dist/type", format: "es" },
+          external: externalConfig,
+          plugins: [...commonPlugins, dts()],
+        },
+      ];
+    case "csj":
+      return [
+        {
+          input: [entry, ...componentsEntry],
+          output: { ...cjsOutput },
+          external: externalConfig,
+          plugins: [...commonPlugins],
+        },
+        {
+          input: [entry, ...componentsEntry],
+          output: { ...cjsOutput, dir: "dist/type" },
+          external: externalConfig,
+          plugins: [...commonPlugins, dts()],
+        },
+      ];
+    case "umd":
+      return [
+        {
+          input: entry,
+          output: umdOutput,
+          external: externalConfig,
+          plugins: [...commonPlugins, terser()],
+        },
+        {
+          input: entry,
+          output: {
+            preserveModules: true,
+            dir: "dist/type",
+          },
           external: externalConfig,
           plugins: [...commonPlugins, dts()],
         },
