@@ -101,7 +101,7 @@ export default () => {
           plugins: [...commonPlugins, terser()],
         },
         {
-          input: entry,
+          input: [entry, ...componentsEntry],
           output: {
             preserveModules: true,
             dir: "dist/type",
