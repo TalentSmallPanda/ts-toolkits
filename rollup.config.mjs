@@ -14,6 +14,9 @@ const entry = "src/index.ts";
 const utilsDir = "src/utils";
 const utilsName = fs.readdirSync(path.resolve(utilsDir));
 const componentsEntry = utilsName.map((name) => `${utilsDir}/${name}`);
+// const enumsDir = "src/enums";
+// const enumsName = fs.readdirSync(path.resolve(enumsDir));
+// const enumsEntry = enumsName.map((name) => `${enumsDir}/${name}`);
 
 // 环境变量
 const isProd = process.env.NODE_ENV === "production";
@@ -103,12 +106,32 @@ export default () => {
         {
           input: [entry, ...componentsEntry],
           output: {
-            preserveModules: true,
+            preserveModules: false, // 关闭 preserveModules
             dir: "dist/type",
+            entryFileNames: (chunkInfo) => {
+              const basename = path.basename(chunkInfo.name); // 提取文件名并返回
+              // if (basename.includes("enum")) {
+              //   return basename + ".ts";
+              // }
+              return basename + ".d.ts";
+            },
           },
           external: externalConfig,
           plugins: [...commonPlugins, dts()],
         },
+        // {
+        //   input: [...enumsEntry],
+        //   output: {
+        //     preserveModules: false, // 关闭 preserveModules
+        //     dir: "dist/enum",
+        //     entryFileNames: (chunkInfo) => {
+        //       const basename = path.basename(chunkInfo.name); // 提取文件名并返回
+        //       return basename + ".ts";
+        //     },
+        //   },
+        //   external: externalConfig,
+        //   plugins: [...commonPlugins, dts()],
+        // },
       ];
   }
 };
