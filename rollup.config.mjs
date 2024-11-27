@@ -104,21 +104,29 @@ export default () => {
           plugins: [...commonPlugins, terser()],
         },
         {
-          input: [entry, ...componentsEntry],
+          input: entry,
           output: {
-            preserveModules: false, // 关闭 preserveModules
-            dir: "dist/type",
-            entryFileNames: (chunkInfo) => {
-              const basename = path.basename(chunkInfo.name); // 提取文件名并返回
-              // if (basename.includes("enum")) {
-              //   return basename + ".ts";
-              // }
-              return basename + ".d.ts";
-            },
+            file: "dist/index.d.ts",
           },
           external: externalConfig,
           plugins: [...commonPlugins, dts()],
         },
+        // {
+        //   input: [entry, ...componentsEntry],
+        //   output: {
+        //     preserveModules: false, // 关闭 preserveModules
+        //     dir: "dist/type",
+        //     entryFileNames: (chunkInfo) => {
+        //       const basename = path.basename(chunkInfo.name); // 提取文件名并返回
+        //       // if (basename.includes("enum")) {
+        //       //   return basename + ".ts";
+        //       // }
+        //       return basename + ".d.ts";
+        //     },
+        //   },
+        //   external: externalConfig,
+        //   plugins: [...commonPlugins, dts()],
+        // },
         // {
         //   input: [...enumsEntry],
         //   output: {
