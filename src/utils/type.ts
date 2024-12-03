@@ -6,12 +6,11 @@ export type NotEmptyArray<T> = [T, ...T[]];
 export type EmptyArray = [];
 export type NullableArray<T> = T[] | undefined | null;
 
-export type TreeNode = {
-  children?: TreeNode[];
-  [key: string]: any; // 允许其他任意属性
+export type TreeNode<T> = T & {
+  children: TreeNode<T>[];
 };
 
-export type TreeItem = {
+export type BaseTreeItem = {
   isLast?: boolean;
   expanded?: boolean;
   idxs: number[];
@@ -21,6 +20,8 @@ export type TreeItem = {
   children: any[];
   [key: string]: any;
 };
+
+export type TreeItem<T> = BaseTreeItem & T & { children: TreeItem<T>[] };
 
 type BaseTreeOpinions<T> = {
   /**
@@ -38,4 +39,10 @@ export type ListToTreeOps<T> = BaseTreeOpinions<T> & {
    * parentKeyField 充当parentKey的字段
    */
   parentKeyField: keyof T & string;
+};
+
+export type UpdateOperation<T> = {
+  idxs: number[];
+  field: keyof T;
+  value: any;
 };

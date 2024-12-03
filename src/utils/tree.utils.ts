@@ -1,6 +1,6 @@
 import { ObjectUtils, ArrayUtils } from "..";
 import { IsLast, TreeLevel } from "./enum";
-import { ListToTreeOps, TreeItem, TreeNode } from "./type";
+import { ListToTreeOps, BaseTreeItem, TreeNode, TreeItem, UpdateOperation } from "./type";
 
 export default class TreeUtils {
   /**
@@ -12,17 +12,17 @@ export default class TreeUtils {
    *  @param lastArray:  the last node index array
    *  @return:  the tree structure data with the necessary properties set
    */
-  public static initTree = <T extends TreeItem, K extends T>(
+  public static initTree = <T>(
     list: T[],
     expandLevel = 0,
     depth = TreeLevel.One,
     idxs: number[] = [],
     lastArray: number[] = []
-  ): K[] => {
-    const list1: any[] = [];
+  ): TreeItem<T>[] => {
+    const list1: TreeItem<T>[] = [];
     const length = list.length;
     for (let index = 0; index < length; index++) {
-      const item = list[index];
+      const item = list[index] as TreeItem<T>;
       const indexs = idxs.concat([index]);
       const isLast = index === length - 1;
       const curLtArray = lastArray.concat([isLast ? IsLast.T : IsLast.F]);
@@ -50,7 +50,7 @@ export default class TreeUtils {
    *  @return:  the tree structure data
    */
   public static createTree = (fields = ["id"], maxLevel = 2, num = 10, depth = 0, idxs: number[] = []): any[] => {
-    if (depth >= maxLevel) return [];
+    if (depth > maxLevel) return [];
     return Array(num)
       .fill("")
       .map((_, index) => {
@@ -72,10 +72,10 @@ export default class TreeUtils {
    *  @param key:  the key of the node in the tree structure data that is used to determine whether the node is expanded or not
    *  @return:  the tree structure data with the expanded status set
    */
-  public static expandTree = <T extends TreeItem, K = T>(list: T[], expands: string[], key: keyof K): T[] => {
+  public static expandTree = <T extends BaseTreeItem, K = T>(list: T[], expands: string[], key: keyof K): T[] => {
     const newSortRows: T[] = [];
     const expandSets = new Set(expands);
-    const loop = (rows: any[]) => {
+    const loop = (rows: T[]) => {
       while (rows.length) {
         const node = rows.shift() as any;
         if (expandSets.has(node[key])) {
@@ -86,10 +86,6 @@ export default class TreeUtils {
         newSortRows.push(node);
         if (expandSets.has(node[key]) && !!node.children?.length) {
           const children: T[] = node.children;
-          // const lastIndex = children.length - 1;
-          // children.forEach((child, index) => {
-          //   child.isLast = index === lastIndex;
-          // });
           loop([...children]);
         }
       }
@@ -105,33 +101,133 @@ export default class TreeUtils {
    * @param {number} [depth=0]  The depth of the tree data
    * @returns {TreeNode[]}  The converted tree data
    */
-  public static handleListToTree = <T extends { [key: string]: any }>(
+  public static handleListToTree = <T>(
     list: T[],
     parentKey: string | undefined,
-    ops: ListToTreeOps<T> = { keyField: "key", parentKeyField: "parentKey" },
+    ops: ListToTreeOps<T>,
     depth = 0
-  ): TreeNode[] => {
+  ): TreeNode<T>[] => {
     if (!Array.isArray(list)) {
       return [];
     }
     if (ArrayUtils.isEmpty(list)) {
       return [];
     }
-    const array: TreeNode[] = [];
+    const array: TreeNode<T>[] = [];
     for (const item of list) {
-      if (item[`${ops.parentKeyField}`] === parentKey) {
+      const itm = item as TreeNode<T>;
+      if (itm[`${String(ops.parentKeyField)}`] === parentKey) {
         if (ObjectUtils.hasValue(ops.maxLevel) && depth >= Math.max(ops.maxLevel, 0) / 1) {
-          array.push(item);
+          array.push(itm);
         } else {
-          const list1 = list.filter((o) => o[`${ops.parentKeyField}`] !== parentKey);
-          const chdList = this.handleListToTree(list1, item[`${ops.keyField}`], ops, depth + 1);
+          const list1 = list.filter((o) => o[`${String(ops.parentKeyField)}`] !== parentKey);
+          const chdList = this.handleListToTree(list1, itm[`${String(ops.keyField)}`], ops, depth + 1);
           if (ArrayUtils.isNotEmpty(chdList)) {
-            Object.assign(item, { children: chdList });
+            Object.assign(itm, { children: chdList });
           }
-          array.push(item);
+          array.push(itm);
         }
       }
     }
     return array;
   };
+
+  /**
+   * Get a tree item by its ids.
+   * @param data The tree data.
+   * @param idxs The ids of the item.
+   * @returns The item if found, null otherwise.
+   */
+  public static getTreeItemByIdxs = <T>(data: T[], idxs: number[]): T | null => {
+    /**
+     * Get an item from the list by its index.
+     * @param list The list of items.
+     * @param depth The current depth.
+     * @returns The item if found, null otherwise.
+     */
+    const getItem = (list: T[], depth = 0): T | null => {
+      if (!list || depth > idxs.length) {
+        return null;
+      }
+      let idx = idxs[depth];
+      idx = Math.max(0, Math.min(idx, list.length - 1));
+      const itm = list[idx] as any;
+      if (!itm) return null;
+      const chdList = itm.children;
+      if (depth === idxs.length - 1 || ArrayUtils.isEmpty(chdList)) {
+        return itm;
+      } else {
+        return getItem(chdList, depth + 1);
+      }
+    };
+    return getItem(data);
+  };
+
+  /**
+   * Update a tree item by its ids.
+   * @param data The tree data.
+   * @param idxs The ids of the item.
+   * @param field The field to update.
+   * @param value The new value.
+   * @returns The updated data.
+   */
+  public static updateTreeItemByIdxs<T extends BaseTreeItem>(
+    data: T[],
+    idxs: number[],
+    field: keyof T,
+    value: any
+  ): T[] {
+    const list = data.filter((o) => o.level === TreeLevel.One);
+    const item = this.getTreeItemByIdxs(list, idxs);
+    if (ObjectUtils.hasValue(item)) {
+      item[field] = value;
+    }
+    return data.slice();
+  }
+
+  /**
+   * Updates multiple tree items in the tree data using the specified indices lists.
+   * @param data The tree data.
+   * @param updates An array of update operations.
+   * @returns The updated tree data after the updates.
+   */
+  public static updateTreeItemsByIdxs<T extends BaseTreeItem>(data: T[], updates: UpdateOperation<T>[]): T[] {
+    const list = data.filter((o) => o.level === TreeLevel.One);
+    for (const update of updates) {
+      const item = this.getTreeItemByIdxs(list, update.idxs);
+      if (item) {
+        (item as any)[update.field] = update.value;
+      }
+    }
+    return data.slice();
+  }
+
+  /**
+   * Deletes a tree item from the tree data using the specified indices list.
+   * @param data The tree data.
+   * @param idxs The indices of the tree item to delete.
+   * @returns The updated tree data after deletion of specified item.
+   */
+  public static deleteTreeItemByIdxs<T extends BaseTreeItem>(data: T[], idxs: number[]): T[] {
+    const list = data.filter((o) => o.level === TreeLevel.One);
+    const parent = this.getTreeItemByIdxs(list, idxs.slice(0, -1)) as T;
+    if (parent && parent.children) {
+      parent.children = parent.children.filter((_, i) => i !== idxs[idxs.length - 1]);
+    }
+    return data.slice();
+  }
+
+  /**
+   * Deletes multiple tree items from the tree data using the specified indices list.
+   * @param data The tree data.
+   * @param idxsList A list of indices arrays, each representing the path to a tree item to delete.
+   * @returns The updated tree data after deletion of specified items.
+   */
+  public static deleteTreeItemsByIdxs<T extends BaseTreeItem>(data: T[], idxsList: number[][]): T[] {
+    let newData = data.slice();
+    for (const idxs of idxsList) {
+      newData = this.deleteTreeItemByIdxs(newData, idxs);
+    }
+    return newData;
+  }
 }
