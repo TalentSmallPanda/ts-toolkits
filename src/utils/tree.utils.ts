@@ -29,12 +29,12 @@ export default class TreeUtils {
       item.idxs = indexs;
       item.level = depth;
       item.lastArray = curLtArray;
-      item.isFather = !!item.children?.length;
+      item.isFather = ArrayUtils.isNotEmpty(item.children);
       item.expanded = depth < expandLevel;
-      item.children =
-        Array.isArray(item.children) && item?.children?.length > 0
-          ? this.initTree(item.children, expandLevel, depth + 1, indexs, curLtArray)
-          : [];
+      item.uniKey = indexs.join("-");
+      item.children = ArrayUtils.isNotEmpty(item.children)
+        ? this.initTree(item.children, expandLevel, depth + 1, indexs, curLtArray)
+        : [];
       list1.push(item);
     }
     return list1;
@@ -86,7 +86,7 @@ export default class TreeUtils {
         newSortRows.push(node);
         if (expandSets.has(node[key]) && !!node.children?.length) {
           const children: T[] = node.children;
-          loop([...children]);
+          loop(children.slice());
         }
       }
     };
@@ -107,7 +107,7 @@ export default class TreeUtils {
     ops: ListToTreeOps<T>,
     depth = 0
   ): TreeNode<T>[] => {
-    if (!Array.isArray(list)) {
+    if (!ObjectUtils.isArray(list)) {
       return [];
     }
     if (ArrayUtils.isEmpty(list)) {
@@ -146,13 +146,15 @@ export default class TreeUtils {
      * @returns The item if found, null otherwise.
      */
     const getItem = (list: T[], depth = 0): T | null => {
-      if (!list || depth > idxs.length) {
+      if (ArrayUtils.isEmpty(list) || depth > idxs.length) {
         return null;
       }
       let idx = idxs[depth];
       idx = Math.max(0, Math.min(idx, list.length - 1));
       const itm = list[idx] as any;
-      if (!itm) return null;
+      if (!ObjectUtils.hasValue(itm)) {
+        return null;
+      }
       const chdList = itm.children;
       if (depth === idxs.length - 1 || ArrayUtils.isEmpty(chdList)) {
         return itm;
@@ -195,8 +197,8 @@ export default class TreeUtils {
     const list = data.filter((o) => o.level === TreeLevel.One);
     for (const update of updates) {
       const item = this.getTreeItemByIdxs(list, update.idxs);
-      if (item) {
-        (item as any)[update.field] = update.value;
+      if (ObjectUtils.hasValue(item)) {
+        item[update.field] = update.value;
       }
     }
     return data.slice();
@@ -211,7 +213,7 @@ export default class TreeUtils {
   public static deleteTreeItemByIdxs<T extends BaseTreeItem>(data: T[], idxs: number[]): T[] {
     const list = data.filter((o) => o.level === TreeLevel.One);
     const parent = this.getTreeItemByIdxs(list, idxs.slice(0, -1)) as T;
-    if (parent && parent.children) {
+    if (ObjectUtils.hasValue(parent) && ArrayUtils.isNotEmpty(parent.children)) {
       parent.children = parent.children.filter((_, i) => i !== idxs[idxs.length - 1]);
     }
     return data.slice();

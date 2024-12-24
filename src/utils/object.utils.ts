@@ -47,7 +47,7 @@ export default class ObjectUtils {
    * @example ObjectUtils.isArray(1)            = false
    */
   public static isArray(value: any): value is Array<any> {
-    return value instanceof Array;
+    return Array.isArray(value);
   }
 
   /**

@@ -17,6 +17,7 @@ export type BaseTreeItem = {
   level: number;
   lastArray: number[];
   isFather: boolean;
+  uniKey: string;
   children: any[];
   [key: string]: any;
 };

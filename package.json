@@ -1,6 +1,6 @@
 {
   "name": "ts-toolkits",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Common typescript toolkits",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -45,6 +45,7 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "fs": "0.0.1-security",
     "jest": "29.7.0",
+    "jest-environment-jsdom": "29.7.0",
     "path": "0.12.7",
     "prettier": "2.8.8",
     "rimraf": "5.0.0",
