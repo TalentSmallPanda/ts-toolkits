@@ -34,7 +34,7 @@ const commonPlugins = [
   typescript(),
   babel(babelOptions),
   json(),
-  // terser(),
+  terser(),
 ];
 
 // 忽略文件
@@ -72,19 +72,17 @@ const dtsPlugin = {
     dts(),
     {
       name: "generate-index-dts",
-      // buildEnd() {
-      //   try {
-      //     const indexFilePath = path.join("dist", "index.d.ts");
-      //     fs.writeFileSync(indexFilePath, 'export * from "./types";');
-      //   } catch (error) {
-      //     console.error("Error generating index.d.ts file:", error);
-      //   }
-      // },
+      // buildStart() {}, // 1.打包流程刚开始时触发，用于初始化任务。
+      // resolveId() {}, // 2.在模块路径解析时触发，用于自定义模块路径解析。
+      // load() {}, // 3.加载模块内容时触发，用于返回模块的代码。
+      // transform() {}, // 4.加载模块后，修改模块代码时触发。
+      // buildEnd() {}, // 5.打包流程结束时触发（文件未写入磁盘）。
+      // generateBundle() {}, // 6.在生成打包文件内容（bundle 对象）时触发，用于修改输出内容。
+      // 7.文件写入磁盘后触发，用于操作生成的文件。
       writeBundle() {
         const typesIndexFilePath = path.join("dist", "types", "index.d.ts");
         const typesDir = path.join("dist", "types");
         const indexFilePath = path.join("dist", "index.d.ts");
-
         // try {
         //   const files = fs.readdirSync(typesDir);
         //   const dtsFiles = files.filter((file) => file.endsWith(".d.ts") && file !== "index.d.ts");
@@ -96,7 +94,12 @@ const dtsPlugin = {
         // } catch (error) {
         //   console.error("操作失败：", error);
         // }
-
+        // try {
+        //   const indexFilePath = path.join("dist", "index.d.ts");
+        //   fs.writeFileSync(indexFilePath, 'export * from "./types";');
+        // } catch (error) {
+        //   console.error("Error generating index.d.ts file:", error);
+        // }
         try {
           // 读取 types/index.d.ts 的内容
           const typesIndexContent = fs.readFileSync(typesIndexFilePath, "utf8");
@@ -111,6 +114,7 @@ const dtsPlugin = {
           console.error("操作失败：", error);
         }
       },
+      // closeBundle() {},// 8.打包完全结束后触发，用于清理或关闭资源。
     },
   ],
 };
