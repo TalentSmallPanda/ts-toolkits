@@ -6,8 +6,8 @@ export type NotEmptyArray<T> = [T, ...T[]];
 export type EmptyArray = [];
 export type NullableArray<T> = T[] | undefined | null;
 
-export type TreeNode<T> = T & {
-  children: TreeNode<T>[];
+export type TreeData<T> = T & {
+  children: TreeData<T>[];
 };
 
 export type BaseTreeItem = {

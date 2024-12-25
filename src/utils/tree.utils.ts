@@ -1,6 +1,6 @@
 import { ObjectUtils, ArrayUtils } from "..";
 import { IsLast, TreeLevel } from "./enum";
-import { ListToTreeOps, BaseTreeItem, TreeNode, TreeItem, UpdateOperation } from "./type";
+import { ListToTreeOps, BaseTreeItem, TreeData, TreeItem, UpdateOperation } from "./type";
 
 export default class TreeUtils {
   /**
@@ -99,23 +99,23 @@ export default class TreeUtils {
    * @param {string | undefined} parentKey  The parent key of the tree data
    * @param {ListToTreeOps<T>} [ops]  The options for converting list to tree data
    * @param {number} [depth=0]  The depth of the tree data
-   * @returns {TreeNode[]}  The converted tree data
+   * @returns {TreeData[]}  The converted tree data
    */
   public static handleListToTree = <T>(
     list: T[],
     parentKey: string | undefined,
     ops: ListToTreeOps<T>,
     depth = 0
-  ): TreeNode<T>[] => {
+  ): TreeData<T>[] => {
     if (!ObjectUtils.isArray(list)) {
       return [];
     }
     if (ArrayUtils.isEmpty(list)) {
       return [];
     }
-    const array: TreeNode<T>[] = [];
+    const array: TreeData<T>[] = [];
     for (const item of list) {
-      const itm = item as TreeNode<T>;
+      const itm = item as TreeData<T>;
       if (itm[`${String(ops.parentKeyField)}`] === parentKey) {
         if (ObjectUtils.hasValue(ops.maxLevel) && depth >= Math.max(ops.maxLevel, 0) / 1) {
           array.push(itm);

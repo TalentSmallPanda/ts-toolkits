@@ -49,6 +49,7 @@ const esmOutput = {
   //   return "[name].[ext]";
   // },
   dir: "dist/",
+  format: "es",
 };
 
 const cjsOutput = {
@@ -63,36 +64,39 @@ const umdOutput = {
   name: "index",
 };
 
+const generateIndexDts = async () => {
+  try {
+    const indexFilePath = path.join("dist", "index.d.ts");
+    await fs.writeFileSync(indexFilePath, 'export * from "./types";');
+  } catch (error) {
+    console.error("Error generating index.d.ts file:", error);
+  }
+};
+
 export default () => {
   switch (BABEL_ENV) {
     case "esm":
       return [
         {
           input: [entry, ...componentsEntry],
-          output: { ...esmOutput, dir: "dist/", format: "es" },
+          output: esmOutput,
           external: externalConfig,
           plugins: [...commonPlugins],
         },
-        {
-          input: [entry, ...componentsEntry],
-          output: { ...esmOutput, dir: "dist/type", format: "es" },
-          external: externalConfig,
-          plugins: [...commonPlugins, dts()],
-        },
+        // {
+        //   input: [entry, ...componentsEntry],
+        //   output: { ...esmOutput, dir: "dist", format: "es" },
+        //   external: externalConfig,
+        //   plugins: [...commonPlugins, dts()],
+        // },
       ];
-    case "csj":
+    case "cjs":
       return [
         {
           input: [entry, ...componentsEntry],
-          output: { ...cjsOutput },
+          output: cjsOutput,
           external: externalConfig,
           plugins: [...commonPlugins],
-        },
-        {
-          input: [entry, ...componentsEntry],
-          output: { ...cjsOutput, dir: "dist/type" },
-          external: externalConfig,
-          plugins: [...commonPlugins, dts()],
         },
       ];
     case "umd":
@@ -104,12 +108,29 @@ export default () => {
           plugins: [...commonPlugins, terser()],
         },
         {
-          input: entry,
+          input: [entry, ...componentsEntry],
           output: {
-            file: "dist/index.d.ts",
+            preserveModules: false,
+            dir: "dist/types",
+            entryFileNames: (chunkInfo) => {
+              const basename = path.basename(chunkInfo.name); // 提取文件名并返回
+              return basename + ".d.ts";
+            },
           },
-          external: externalConfig,
-          plugins: [...commonPlugins, dts()],
+          plugins: [
+            dts(),
+            {
+              name: "generate-index-dts",
+              async buildEnd() {
+                try {
+                  const indexFilePath = path.join("dist", "index.d.ts");
+                  await fs.writeFileSync(indexFilePath, 'export * from "./types";');
+                } catch (error) {
+                  console.error("Error generating index.d.ts file:", error);
+                }
+              },
+            },
+          ],
         },
         // {
         //   input: [entry, ...componentsEntry],
