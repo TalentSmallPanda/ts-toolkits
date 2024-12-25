@@ -14,9 +14,6 @@ const entry = "src/index.ts";
 const utilsDir = "src/utils";
 const utilsName = fs.readdirSync(path.resolve(utilsDir));
 const componentsEntry = utilsName.map((name) => `${utilsDir}/${name}`);
-// const enumsDir = "src/enums";
-// const enumsName = fs.readdirSync(path.resolve(enumsDir));
-// const enumsEntry = enumsName.map((name) => `${enumsDir}/${name}`);
 
 // 环境变量
 const isProd = process.env.NODE_ENV === "production";
@@ -37,17 +34,14 @@ const commonPlugins = [
   typescript(),
   babel(babelOptions),
   json(),
+  // terser(),
 ];
 
 // 忽略文件
 const externalConfig = [(id) => /\/__expample__|main.tsx/.test(id), "**/node_modules/**"];
 
-// ES Module打包输出
 const esmOutput = {
   preserveModules: true,
-  // assetFileNames: () => {
-  //   return "[name].[ext]";
-  // },
   dir: "dist/",
   format: "es",
 };
@@ -64,13 +58,61 @@ const umdOutput = {
   name: "index",
 };
 
-const generateIndexDts = async () => {
-  try {
-    const indexFilePath = path.join("dist", "index.d.ts");
-    await fs.writeFileSync(indexFilePath, 'export * from "./types";');
-  } catch (error) {
-    console.error("Error generating index.d.ts file:", error);
-  }
+const dtsPlugin = {
+  input: [entry, ...componentsEntry],
+  output: {
+    preserveModules: false,
+    dir: "dist/types",
+    entryFileNames: (chunkInfo) => {
+      const basename = path.basename(chunkInfo.name);
+      return basename + ".d.ts";
+    },
+  },
+  plugins: [
+    dts(),
+    {
+      name: "generate-index-dts",
+      // buildEnd() {
+      //   try {
+      //     const indexFilePath = path.join("dist", "index.d.ts");
+      //     fs.writeFileSync(indexFilePath, 'export * from "./types";');
+      //   } catch (error) {
+      //     console.error("Error generating index.d.ts file:", error);
+      //   }
+      // },
+      writeBundle() {
+        const typesIndexFilePath = path.join("dist", "types", "index.d.ts");
+        const typesDir = path.join("dist", "types");
+        const indexFilePath = path.join("dist", "index.d.ts");
+
+        // try {
+        //   const files = fs.readdirSync(typesDir);
+        //   const dtsFiles = files.filter((file) => file.endsWith(".d.ts") && file !== "index.d.ts");
+        //   const importStatements = dtsFiles
+        //     .map((file) => `export * from "./types/${file.replace(".d.ts", "")}";`)
+        //     .join("\n");
+        //   fs.writeFileSync(indexFilePath, importStatements);
+        //   fs.unlinkSync(typesIndexFilePath);
+        // } catch (error) {
+        //   console.error("操作失败：", error);
+        // }
+
+        try {
+          // 读取 types/index.d.ts 的内容
+          const typesIndexContent = fs.readFileSync(typesIndexFilePath, "utf8");
+          // 替换路径
+          const newContent = typesIndexContent.replace(/\.\//g, "./types/");
+          // 将替换后的内容写入 dist/index.d.ts
+          fs.writeFileSync(indexFilePath, newContent);
+          // 删除 types/index.d.ts
+          fs.unlinkSync(typesIndexFilePath);
+          console.log("操作完成：已将处理后的内容写入 dist/index.d.ts 并删除 types/index.d.ts");
+        } catch (error) {
+          console.error("操作失败：", error);
+        }
+      },
+    },
+  ],
 };
 
 export default () => {
@@ -81,14 +123,9 @@ export default () => {
           input: [entry, ...componentsEntry],
           output: esmOutput,
           external: externalConfig,
-          plugins: [...commonPlugins],
+          plugins: commonPlugins,
         },
-        // {
-        //   input: [entry, ...componentsEntry],
-        //   output: { ...esmOutput, dir: "dist", format: "es" },
-        //   external: externalConfig,
-        //   plugins: [...commonPlugins, dts()],
-        // },
+        dtsPlugin,
       ];
     case "cjs":
       return [
@@ -96,8 +133,9 @@ export default () => {
           input: [entry, ...componentsEntry],
           output: cjsOutput,
           external: externalConfig,
-          plugins: [...commonPlugins],
+          plugins: commonPlugins,
         },
+        dtsPlugin,
       ];
     case "umd":
       return [
@@ -105,62 +143,9 @@ export default () => {
           input: entry,
           output: umdOutput,
           external: externalConfig,
-          plugins: [...commonPlugins, terser()],
+          plugins: commonPlugins,
         },
-        {
-          input: [entry, ...componentsEntry],
-          output: {
-            preserveModules: false,
-            dir: "dist/types",
-            entryFileNames: (chunkInfo) => {
-              const basename = path.basename(chunkInfo.name); // 提取文件名并返回
-              return basename + ".d.ts";
-            },
-          },
-          plugins: [
-            dts(),
-            {
-              name: "generate-index-dts",
-              async buildEnd() {
-                try {
-                  const indexFilePath = path.join("dist", "index.d.ts");
-                  await fs.writeFileSync(indexFilePath, 'export * from "./types";');
-                } catch (error) {
-                  console.error("Error generating index.d.ts file:", error);
-                }
-              },
-            },
-          ],
-        },
-        // {
-        //   input: [entry, ...componentsEntry],
-        //   output: {
-        //     preserveModules: false, // 关闭 preserveModules
-        //     dir: "dist/type",
-        //     entryFileNames: (chunkInfo) => {
-        //       const basename = path.basename(chunkInfo.name); // 提取文件名并返回
-        //       // if (basename.includes("enum")) {
-        //       //   return basename + ".ts";
-        //       // }
-        //       return basename + ".d.ts";
-        //     },
-        //   },
-        //   external: externalConfig,
-        //   plugins: [...commonPlugins, dts()],
-        // },
-        // {
-        //   input: [...enumsEntry],
-        //   output: {
-        //     preserveModules: false, // 关闭 preserveModules
-        //     dir: "dist/enum",
-        //     entryFileNames: (chunkInfo) => {
-        //       const basename = path.basename(chunkInfo.name); // 提取文件名并返回
-        //       return basename + ".ts";
-        //     },
-        //   },
-        //   external: externalConfig,
-        //   plugins: [...commonPlugins, dts()],
-        // },
+        dtsPlugin,
       ];
   }
 };
