@@ -12,18 +12,11 @@ export default class ArrayUtils {
    * @example ArrayUtils.isEmpty(null) = true;
    * @example ArrayUtils.isEmpty(undefined) = true;
    * @example ArrayUtils.isEmtpy([1]) = false;
-   * @example ArrayUtils.isEmtpy("string") throw error;
-   * @example ArrayUtils.isEmtpy(123) throw error;
+   * @example ArrayUtils.isEmtpy("string") = true;
+   * @example ArrayUtils.isEmtpy(123)  = true;
    */
   public static isEmpty<T>(array: T[] | undefined | null): array is EmptyArray {
-    if (ObjectUtils.isNullOrUndefined(array)) {
-      return true;
-    }
-    if (!ObjectUtils.isArray(array)) {
-      throw new Error("input parameter is not a array or null/undefined");
-    }
-
-    return array.length === 0;
+    return !Array.isArray(array) || array.length === 0;
   }
 
   /**
@@ -35,11 +28,11 @@ export default class ArrayUtils {
    * @example ArrayUtils.isNotEmpty(null) = false;
    * @example ArrayUtils.isNotEmpty(undefined) = false;
    * @example ArrayUtils.isNotEmpty([1]) = true;
-   * @example ArrayUtils.isNotEmpty("string") throw error;
-   * @example ArrayUtils.isNotEmpty(123) throw error;
+   * @example ArrayUtils.isNotEmpty("string") = false;
+   * @example ArrayUtils.isNotEmpty(123) = false;
    */
   public static isNotEmpty<T>(array: T[] | undefined | null): array is NotEmptyArray<T> {
-    return !this.isEmpty(array);
+    return Array.isArray(array) && array.length > 0;
   }
 
   /**
@@ -59,7 +52,7 @@ export default class ArrayUtils {
     if (this.isEmpty(array) || ObjectUtils.isNullOrUndefined(item)) {
       return false;
     }
-    return array.indexOf(item) !== -1;
+    return new Set(array).has(item);
   }
 
   /**
@@ -80,7 +73,7 @@ export default class ArrayUtils {
     }
 
     for (const candidate of candidates) {
-      if (array.indexOf(candidate) !== -1) {
+      if (new Set(array).has(candidate)) {
         return true;
       }
     }

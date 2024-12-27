@@ -10,7 +10,7 @@ describe("TreeUtils", () => {
         { id: 2, children: [{ id: 21 }] },
       ];
 
-      const result = TreeUtils.initTree(data, 2);
+      const result = TreeUtils.initTree(data, 2, true);
 
       expect(result.length).toBe(2);
       expect(result[0].level).toBe(TreeLevel.One);

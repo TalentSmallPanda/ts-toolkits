@@ -14,7 +14,8 @@ export default class TreeUtils {
    */
   public static initTree = <T>(
     list: T[],
-    expandLevel = 0,
+    expandLevel = -1,
+    hasUniKey = false,
     depth = TreeLevel.One,
     idxs: number[] = [],
     lastArray: number[] = []
@@ -30,10 +31,12 @@ export default class TreeUtils {
       item.level = depth;
       item.lastArray = curLtArray;
       item.isFather = ArrayUtils.isNotEmpty(item.children);
-      item.expanded = depth < expandLevel;
-      item.uniKey = indexs.join("-");
+      item.expanded = depth <= expandLevel;
+      if (hasUniKey) {
+        item.uniKey = indexs.join("-");
+      }
       item.children = ArrayUtils.isNotEmpty(item.children)
-        ? this.initTree(item.children, expandLevel, depth + 1, indexs, curLtArray)
+        ? this.initTree(item.children, expandLevel, hasUniKey, depth + 1, indexs, curLtArray)
         : [];
       list1.push(item);
     }
@@ -75,17 +78,17 @@ export default class TreeUtils {
   public static expandTree = <T extends BaseTreeItem, K = T>(list: T[], expands: string[], key: keyof K): T[] => {
     const newSortRows: T[] = [];
     const expandSets = new Set(expands);
-    const loop = (rows: T[]) => {
-      while (rows.length) {
-        const node = rows.shift() as any;
-        if (expandSets.has(node[key])) {
-          node.expanded = true;
+    const loop = (array: T[]) => {
+      while (ArrayUtils.isNotEmpty(array)) {
+        const item = array.shift() as any;
+        if (expandSets.has(item[key])) {
+          item.expanded = true;
         } else {
-          node.expanded = false;
+          item.expanded = false;
         }
-        newSortRows.push(node);
-        if (expandSets.has(node[key]) && !!node.children?.length) {
-          const children: T[] = node.children;
+        newSortRows.push(item);
+        if (expandSets.has(item[key]) && ArrayUtils.isNotEmpty(item.children)) {
+          const children: T[] = item.children;
           loop(children.slice());
         }
       }
