@@ -45,7 +45,7 @@ export default class NumberUtils {
   /**
    * Returns a string representing a number in fixed-point notation.
    * @param value target value.
-   * @param fractionDigits Number of digits after the decimal point. Must be in the range 0 - 20, inclusive.
+   * @param fractionDigits Number of digits after the decimal point. Must be in the range 0 -100, inclusive.
    * @param defaultValue default value if value is empty.
    */
   public static toFixed(value: number | null | undefined, fractionDigits: number, defaultValue?: string): string {

@@ -32,14 +32,11 @@ export default class EventUtils {
    * @example EventUtils.emit(document,"msg-1", { datail: 123 })
    */
   public static emit(evt: EventTarget, type: string, data: any) {
-    const event = new Event(type, {
+    const event = new CustomEvent(type, {
       ...data,
     });
     if (ObjectUtils.hasValue(evt.dispatchEvent)) {
       evt.dispatchEvent(event);
     }
-    // else {
-    //   evt.fireEvent(myEvent);
-    // }
   }
 }

@@ -201,12 +201,11 @@ export default class ObjectUtils {
    * @example ObjectUtils.getOrDefault<number | null>(1, 0)                 = "1"
    * @example ObjectUtils.getOrDefault<number | null>(null, 0)              = "0"
    */
-  public static getOrDefault<T>(value: T, defaultValue: NonNullable<T>): NonNullable<T> {
-    if (ObjectUtils.isNullOrUndefined(value)) {
-      return defaultValue;
-    } else {
+  public static getOrDefault<T>(value: T | null | undefined, defaultValue: NonNullable<T>): NonNullable<T> {
+    if (!this.isNullOrUndefined(value)) {
       return value as NonNullable<T>;
     }
+    return defaultValue;
   }
 
   /**
