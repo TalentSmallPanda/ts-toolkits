@@ -52,7 +52,7 @@ export default class ArrayUtils {
     if (this.isEmpty(array) || ObjectUtils.isNullOrUndefined(item)) {
       return false;
     }
-    return new Set(array).has(item);
+    return array.includes(item);
   }
 
   /**
@@ -72,8 +72,9 @@ export default class ArrayUtils {
       return false;
     }
 
+    const arraySet = new Set(array);
     for (const candidate of candidates) {
-      if (new Set(array).has(candidate)) {
+      if (arraySet.has(candidate)) {
         return true;
       }
     }
