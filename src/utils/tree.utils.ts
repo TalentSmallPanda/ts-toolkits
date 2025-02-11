@@ -75,21 +75,27 @@ export default class TreeUtils {
    *  @param key:  the key of the node in the tree structure data that is used to determine whether the node is expanded or not
    *  @return:  the tree structure data with the expanded status set
    */
-  public static expandTree = <T extends BaseTreeItem, K = T>(list: T[], expands: string[], key: keyof K): T[] => {
+  public static expandTree = <T extends BaseTreeItem, K = T>(
+    list: T[],
+    expands: string[] | number,
+    key?: typeof expands extends number ? never : keyof K
+  ): T[] => {
     const newSortRows: T[] = [];
-    const expandSets = new Set(expands);
-    const loop = (array: T[]) => {
+    const loop = (array: T[], depth = TreeLevel.One) => {
       while (ArrayUtils.isNotEmpty(array)) {
         const item = array.shift() as any;
-        if (expandSets.has(item[key])) {
-          item.expanded = true;
+        let shouldExpand = false;
+        if (Array.isArray(expands)) {
+          const expandSets = new Set(expands);
+          shouldExpand = expandSets.has(item[key]);
         } else {
-          item.expanded = false;
+          shouldExpand = depth <= expands;
         }
+        item.expanded = shouldExpand;
         newSortRows.push(item);
-        if (expandSets.has(item[key]) && ArrayUtils.isNotEmpty(item.children)) {
+        if (shouldExpand && ArrayUtils.isNotEmpty(item.children)) {
           const children: T[] = item.children;
-          loop(children.slice());
+          loop(children.slice(), depth + 1);
         }
       }
     };

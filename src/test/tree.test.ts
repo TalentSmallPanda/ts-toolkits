@@ -83,41 +83,51 @@ describe("TreeUtils", () => {
   });
 
   describe("expandTree", () => {
-    it("should expand the tree correctly", () => {
-      const data = [
-        {
-          id: "1",
-          expanded: false,
-          children: [
-            { id: "11", expanded: false },
-            { id: "12", expanded: false },
-          ],
-        },
-        { id: "2", expanded: false, children: [{ id: "21", expanded: false }] },
-      ];
+    const baseData = [
+      {
+        id: "1",
+        expanded: false,
+        children: [
+          { id: "11", expanded: false },
+          { id: "12", expanded: false },
+        ],
+      },
+      { id: "2", expanded: false, children: [{ id: "21", expanded: false }] },
+    ];
+    it("should expand the tree correctly for specific ids", () => {
+      const data = TreeUtils.initTree(baseData);
       const expands = ["1"];
-      const result = TreeUtils.expandTree(TreeUtils.initTree(data), expands, "id");
+      const result = TreeUtils.expandTree(data, expands, "id");
       expect(result[0].expanded).toBe(true);
       expect(result[0].children[0].expanded).toBe(false);
       expect(result[1].expanded).toBe(false);
     });
     it("should handle empty expands array correctly", () => {
-      const data = [
-        {
-          id: "1",
-          expanded: false,
-          children: [
-            { id: "11", expanded: false },
-            { id: "12", expanded: false },
-          ],
-        },
-        { id: "2", expanded: false, children: [{ id: "21", expanded: false }] },
-      ];
+      const data = TreeUtils.initTree(baseData);
       const expands: string[] = [];
-      const result = TreeUtils.expandTree(TreeUtils.initTree(data), expands, "id");
+      const result = TreeUtils.expandTree(data, expands, "id");
       expect(result[0].expanded).toBe(false);
       expect(result[0].children[0].expanded).toBe(false);
       expect(result[1].expanded).toBe(false);
+    });
+
+    it("should expand tree based on depth when expands is a number", () => {
+      const data = TreeUtils.initTree(baseData);
+      const expands = 1; // Expand first level only
+      const result = TreeUtils.expandTree(data, expands);
+      expect(result[0].expanded).toBe(true);
+      expect(result[0].children[0].expanded).toBe(true);
+      expect(result[1].expanded).toBe(true);
+    });
+
+    it("should not expand any items if given depth is 0", () => {
+      const data = TreeUtils.initTree(baseData);
+      const expands = 0;
+      const result = TreeUtils.expandTree(data, expands);
+      expect(result[0].expanded).toBe(true);
+      expect(result[0].children[0].expanded).toBe(false);
+      expect(result[1].expanded).toBe(false);
+      expect(result[3].expanded).toBe(true);
     });
   });
 
