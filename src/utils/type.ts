@@ -32,14 +32,14 @@ type BaseTreeOpinions<T> = {
   /**
    * keyField  充当唯一标识的字段
    */
-  keyField: keyof T & string;
+  keyField: keyof T;
 };
 
 export type ListToTreeOps<T> = BaseTreeOpinions<T> & {
   /*
    * parentKeyField 充当parentKey的字段
    */
-  parentKeyField: keyof T & string;
+  parentKeyField: keyof T;
 };
 
 export type UpdateOperation<T> = {

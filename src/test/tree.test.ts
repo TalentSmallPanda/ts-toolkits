@@ -191,7 +191,17 @@ describe("TreeUtils", () => {
       const result = TreeUtils.handleListToTree(list, "", ops);
       expect(result.length).toBe(1);
       expect(result[0].id).toBe("01");
-      expect(result[0].children?.length).toBe(undefined); // maxLevel is 0, children should be undefined
+      expect(result[0].children?.length).toBe(0);
+    });
+    it("should handle maxLevel < 0", () => {
+      const list = [{ id: "01", name: "张大大", pid: "", job: "项目经理" }];
+      const ops: ListToTreeOps<{ id: string; pid: string }> = {
+        keyField: "id",
+        parentKeyField: "pid",
+        maxLevel: -1,
+      };
+      const result = TreeUtils.handleListToTree(list, "", ops);
+      expect(result.length).toBe(0);
     });
   });
 

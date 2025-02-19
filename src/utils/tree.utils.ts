@@ -105,40 +105,50 @@ export default class TreeUtils {
 
   /**
    * @param {T[]} list  The list of data to be converted to tree data
-   * @param {string | undefined} parentKey  The parent key of the tree data
+   * @param {string | undefined | null | number} parentKey  The parent key of the tree data
    * @param {ListToTreeOps<T>} [ops]  The options for converting list to tree data
    * @param {number} [depth=0]  The depth of the tree data
    * @returns {TreeData[]}  The converted tree data
    */
   public static handleListToTree = <T>(
     list: T[],
-    parentKey: string | undefined,
-    ops: ListToTreeOps<T>,
-    depth = 0
+    parentKey: string | number | undefined | null,
+    ops: ListToTreeOps<T>
   ): TreeData<T>[] => {
-    if (!ObjectUtils.isArray(list)) {
+    if (!ObjectUtils.isArray(list) || (ObjectUtils.isNumber(ops.maxLevel) && ops.maxLevel < 0)) {
       return [];
     }
     if (ArrayUtils.isEmpty(list)) {
       return [];
     }
+    const nodeMap = new Map<T[keyof T], TreeData<T>>();
+    for (const item of list) {
+      const uniqueId = item[ops.keyField];
+      nodeMap.set(uniqueId, Object.assign({}, item, { children: [] }));
+    }
     const array: TreeData<T>[] = [];
     for (const item of list) {
-      const itm = item as TreeData<T>;
-      if (itm[`${String(ops.parentKeyField)}`] === parentKey) {
-        if (ObjectUtils.hasValue(ops.maxLevel) && depth >= Math.max(ops.maxLevel, 0) / 1) {
-          array.push(itm);
-        } else {
-          const list1 = list.filter((o) => o[`${String(ops.parentKeyField)}`] !== parentKey);
-          const chdList = this.handleListToTree(list1, itm[`${String(ops.keyField)}`], ops, depth + 1);
-          if (ArrayUtils.isNotEmpty(chdList)) {
-            Object.assign(itm, { children: chdList });
-          }
-          array.push(itm);
-        }
+      const parentId = item[ops.parentKeyField];
+      const uniqueId = item[ops.keyField];
+      const node = nodeMap.get(uniqueId)!;
+      if (parentId === parentKey) {
+        array.push(node);
+      } else {
+        const parentNode = nodeMap.get(parentId)!;
+        parentNode.children.push(node);
       }
     }
+    if (ObjectUtils.isNumber(ops.maxLevel)) {
+      this.handleListDepth(array, Math.floor(ops.maxLevel), 0);
+    }
     return array;
+  };
+
+  private static handleListDepth = <T>(list: TreeData<T>[], maxLevel: number, depth: number): TreeData<T>[] => {
+    for (const item of list) {
+      item.children = depth < maxLevel ? this.handleListDepth(item.children, maxLevel, depth + 1) : [];
+    }
+    return list;
   };
 
   /**
