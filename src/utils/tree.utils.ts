@@ -1,6 +1,6 @@
 import { ObjectUtils, ArrayUtils } from "..";
 import { IsLast, TreeLevel } from "./enum";
-import { ListToTreeOps, BaseTreeItem, TreeData, TreeItem, UpdateOperation } from "./type";
+import { ListToTreeOps, BaseTreeItem, BaseTreeData, TreeItem, UpdateOperation, DynamicFields } from "./type";
 
 export default class TreeUtils {
   /**
@@ -52,7 +52,13 @@ export default class TreeUtils {
    *  @param idxs:  the array of indexs of the parent node
    *  @return:  the tree structure data
    */
-  public static createTree = (fields = ["id"], maxLevel = 2, num = 10, depth = 0, idxs: number[] = []): any[] => {
+  public static createTree = <T extends string[]>(
+    fields = ["id"] as T,
+    maxLevel = 2,
+    num = 10,
+    depth = 0,
+    idxs: number[] = []
+  ): BaseTreeData<DynamicFields<T>>[] => {
     if (depth > maxLevel) return [];
     return Array(num)
       .fill("")
@@ -108,25 +114,25 @@ export default class TreeUtils {
    * @param {string | undefined | null | number} parentKey  The parent key of the tree data
    * @param {ListToTreeOps<T>} [ops]  The options for converting list to tree data
    * @param {number} [depth=0]  The depth of the tree data
-   * @returns {TreeData[]}  The converted tree data
+   * @returns {BaseTreeData[]}  The converted tree data
    */
   public static handleListToTree = <T>(
     list: T[],
     parentKey: string | number | undefined | null,
     ops: ListToTreeOps<T>
-  ): TreeData<T>[] => {
+  ): BaseTreeData<T>[] => {
     if (!ObjectUtils.isArray(list) || (ObjectUtils.isNumber(ops.maxLevel) && ops.maxLevel < 0)) {
       return [];
     }
     if (ArrayUtils.isEmpty(list)) {
       return [];
     }
-    const nodeMap = new Map<T[keyof T], TreeData<T>>();
+    const nodeMap = new Map<T[keyof T], BaseTreeData<T>>();
     for (const item of list) {
       const uniqueId = item[ops.keyField];
       nodeMap.set(uniqueId, Object.assign({}, item, { children: [] }));
     }
-    const array: TreeData<T>[] = [];
+    const array: BaseTreeData<T>[] = [];
     for (const item of list) {
       const parentId = item[ops.parentKeyField];
       const uniqueId = item[ops.keyField];
@@ -144,7 +150,7 @@ export default class TreeUtils {
     return array;
   };
 
-  private static handleListDepth = <T>(list: TreeData<T>[], maxLevel: number, depth: number): TreeData<T>[] => {
+  private static handleListDepth = <T>(list: BaseTreeData<T>[], maxLevel: number, depth: number): BaseTreeData<T>[] => {
     for (const item of list) {
       item.children = depth < maxLevel ? this.handleListDepth(item.children, maxLevel, depth + 1) : [];
     }
