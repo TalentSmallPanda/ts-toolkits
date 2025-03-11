@@ -1,13 +1,12 @@
 export { default as ArrayUtils } from "./utils/array.utils";
 export { default as DateUtils } from "./utils/date.utils";
+export * from "./utils/enum";
 export { default as EventUtils } from "./utils/event.utils";
 export { default as HttpUtils } from "./utils/http.utils";
 export { default as NumberUtils } from "./utils/number.utils";
 export { default as ObjectUtils } from "./utils/object.utils";
+export { default as QueryUtils } from "./utils/query.utils";
+export { default as SortUtils } from "./utils/sort.utils";
 export { default as StringUtils } from "./utils/string.utils";
 export { default as TreeUtils } from "./utils/tree.utils";
-export { default as QueryUtils } from "./utils/query.utils";
 export * from "./utils/type";
-export * from "./utils/enum";
-// import "./utils/type";
-// import "./utils/enum";

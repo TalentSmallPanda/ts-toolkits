@@ -1,4 +1,4 @@
-import { Operator } from "./enum";
+import { Operator } from "..";
 import { BaseCondition, Condition, ConditionGroup, Logic, QueryChunkOps } from "./type";
 
 export default class QueryUtils {
@@ -13,10 +13,10 @@ export default class QueryUtils {
    * @param condition.compare 自定义比较函数（优先级高于预设操作符）
    * @returns 如果对象满足条件则返回true，否则返回false
    */
-  private static queryCondition = <T>(
+  private static queryCondition<T>(
     item: T,
     { field, operator, value, ignoreCase: ignoreCase = true, compare }: BaseCondition<T>
-  ): boolean => {
+  ): boolean {
     const itemValue = item[field] as string | number;
     if (compare) return compare(itemValue, value);
 
@@ -74,7 +74,7 @@ export default class QueryUtils {
       default:
         return true;
     }
-  };
+  }
 
   /**
    * 检查指定项是否满足给定的条件
@@ -82,7 +82,7 @@ export default class QueryUtils {
    * @param condition 条件对象，可以是基础条件或条件组
    * @returns 如果满足条件则返回true，否则返回false
    */
-  private static matchCondition = <T>(item: T, condition: Condition<T>): boolean => {
+  private static matchCondition<T>(item: T, condition: Condition<T>): boolean {
     // eslint-disable-next-line no-prototype-builtins
     if ((condition as BaseCondition<T>).hasOwnProperty("field")) {
       return this.queryCondition(item, condition as BaseCondition<T>);
@@ -101,7 +101,7 @@ export default class QueryUtils {
       }
     }
     return isMatch;
-  };
+  }
 
   /**
    * 根据条件分块查询数据，并支持嵌套子项的递归查询
@@ -114,12 +114,12 @@ export default class QueryUtils {
    * @param options.chunkSize 分块处理的大小（默认使用CHUNK_SIZE常量）
    * @returns 过滤后的数据数组
    */
-  public static queryChunk = <T>(
+  public static queryChunk<T>(
     data: T[],
     conditions: Condition<T>[],
     groupLogic: Logic = "AND",
     options: QueryChunkOps<T> = {}
-  ): T[] => {
+  ): T[] {
     const group = { logic: groupLogic, conditions };
     const { isHdChild = false, sourceChildField = "allChildren" as keyof T, chunkSize = 10000 } = options;
     if (chunkSize <= 0) {
@@ -146,5 +146,5 @@ export default class QueryUtils {
     }
 
     return list;
-  };
+  }
 }

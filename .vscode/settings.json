@@ -1,0 +1,53 @@
+{
+  "explorer.confirmDelete": false,
+  "editor.fontSize": 14,
+  "editor.formatOnType": true,
+  "git.autofetch": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "explorer.confirmDragAndDrop": false,
+  "terminal.integrated.defaultProfile.osx": "bash",
+  "editor.tabSize": 2,
+  "eslint.codeAction.showDocumentation": {
+    "enable": true
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "typescript.updateImportsOnFileMove.enabled": "never",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.inlineSuggest.enabled": true,
+  "git.confirmSync": false,
+  "html.autoCreateQuotes": false,
+  "json.maxItemsComputed": 10000,
+  "workbench.editorAssociations": {
+    "*.html": "default"
+  },
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "files.associations": {
+    "*.rs": "rust",
+    ".eslintignore": "typescript"
+  },
+  "liveServer.settings.donotShowInfoMsg": true,
+  "workbench.iconTheme": "vscode-icons"
+}

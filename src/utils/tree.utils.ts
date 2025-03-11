@@ -1,6 +1,5 @@
-import { ObjectUtils, ArrayUtils } from "..";
-import { IsLast, TreeLevel } from "./enum";
-import { ListToTreeOps, BaseTreeItem, BaseTreeData, TreeItem, UpdateOperation, DynamicFields } from "./type";
+import { ArrayUtils, IsLast, ObjectUtils, TreeLevel } from "..";
+import { BaseTreeData, BaseTreeItem, DynamicFields, ListToTreeOps, TreeItem, UpdateOperation } from "./type";
 
 export default class TreeUtils {
   /**
@@ -12,14 +11,14 @@ export default class TreeUtils {
    *  @param lastArray:  the last node index array
    *  @return:  the tree structure data with the necessary properties set
    */
-  public static initTree = <T>(
+  public static initTree<T>(
     list: T[],
     expandLevel = -1,
     hasUniKey = false,
     depth = TreeLevel.One,
     idxs: number[] = [],
     lastArray: number[] = []
-  ): TreeItem<T>[] => {
+  ): TreeItem<T>[] {
     const list1: TreeItem<T>[] = [];
     const length = list.length;
     for (let index = 0; index < length; index++) {
@@ -41,7 +40,7 @@ export default class TreeUtils {
       list1.push(item);
     }
     return list1;
-  };
+  }
 
   /**
    *  @description:  createTree  create a tree structure data with the given fields and the given number of nodes on each level
@@ -52,13 +51,13 @@ export default class TreeUtils {
    *  @param idxs:  the array of indexs of the parent node
    *  @return:  the tree structure data
    */
-  public static createTree = <T extends string[]>(
+  public static createTree<T extends string[]>(
     fields = ["id"] as T,
     maxLevel = 2,
     num = 10,
     depth = 0,
     idxs: number[] = []
-  ): BaseTreeData<DynamicFields<T>>[] => {
+  ): BaseTreeData<DynamicFields<T>>[] {
     if (depth > maxLevel) return [];
     return Array(num)
       .fill("")
@@ -72,7 +71,7 @@ export default class TreeUtils {
         obj.children = this.createTree(fields, maxLevel, num, depth + 1, indexs);
         return obj;
       });
-  };
+  }
 
   /**
    *  @description:  expandTree  traverse the tree structure data and set the expanded status according to the given expands array
@@ -81,11 +80,11 @@ export default class TreeUtils {
    *  @param key:  the key of the node in the tree structure data that is used to determine whether the node is expanded or not
    *  @return:  the tree structure data with the expanded status set
    */
-  public static expandTree = <T extends BaseTreeItem, K = T>(
+  public static expandTree<T extends BaseTreeItem, K = T>(
     list: T[],
     expands: string[] | number,
     key?: typeof expands extends number ? never : keyof K
-  ): T[] => {
+  ): T[] {
     const newSortRows: T[] = [];
     const loop = (array: T[], depth = TreeLevel.One) => {
       while (ArrayUtils.isNotEmpty(array)) {
@@ -107,7 +106,7 @@ export default class TreeUtils {
     };
     loop(list);
     return newSortRows;
-  };
+  }
 
   /**
    * @param {T[]} list  The list of data to be converted to tree data
@@ -116,11 +115,11 @@ export default class TreeUtils {
    * @param {number} [depth=0]  The depth of the tree data
    * @returns {BaseTreeData[]}  The converted tree data
    */
-  public static handleListToTree = <T>(
+  public static handleListToTree<T>(
     list: T[],
     parentKey: string | number | undefined | null,
     ops: ListToTreeOps<T>
-  ): BaseTreeData<T>[] => {
+  ): BaseTreeData<T>[] {
     if (!ObjectUtils.isArray(list) || (ObjectUtils.isNumber(ops.maxLevel) && ops.maxLevel < 0)) {
       return [];
     }
@@ -148,14 +147,14 @@ export default class TreeUtils {
       this.handleListDepth(array, Math.floor(ops.maxLevel), 0);
     }
     return array;
-  };
+  }
 
-  private static handleListDepth = <T>(list: BaseTreeData<T>[], maxLevel: number, depth: number): BaseTreeData<T>[] => {
+  private static handleListDepth<T>(list: BaseTreeData<T>[], maxLevel: number, depth: number): BaseTreeData<T>[] {
     for (const item of list) {
       item.children = depth < maxLevel ? this.handleListDepth(item.children, maxLevel, depth + 1) : [];
     }
     return list;
-  };
+  }
 
   /**
    * Get a tree item by its ids.
@@ -163,7 +162,7 @@ export default class TreeUtils {
    * @param idxs The ids of the item.
    * @returns The item if found, null otherwise.
    */
-  public static getTreeItemByIdxs = <T>(data: T[], idxs: number[]): T | null => {
+  public static getTreeItemByIdxs<T>(data: T[], idxs: number[]): T | null {
     /**
      * Get an item from the list by its index.
      * @param list The list of items.
@@ -188,7 +187,7 @@ export default class TreeUtils {
       }
     };
     return getItem(data);
-  };
+  }
 
   /**
    * Update a tree item by its ids.

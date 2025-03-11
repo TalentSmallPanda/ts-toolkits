@@ -39,3 +39,8 @@ export enum Operator {
   IS_NULL, // 是 null/undefined
   IS_NOT_NULL, // 非 null/undefined
 }
+
+export enum SortOrder {
+  ASC = "ASC", // 正序 (ascending)
+  DESC = "DESC", // 倒序 (descending)
+}

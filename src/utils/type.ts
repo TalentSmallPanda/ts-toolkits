@@ -1,4 +1,4 @@
-import { Operator } from "./enum";
+import { Operator, SortOrder } from "./enum";
 
 export type Nullable = null | undefined;
 export type BlankString = null | undefined | "";
@@ -75,4 +75,36 @@ export type QueryChunkOps<T> = {
 
 export type DynamicFields<Fields extends string[]> = {
   [K in Fields[number]]: string;
+};
+
+export enum ComparatorThan {
+  LessThan = -1,
+  Equal = 0,
+  GreaterThan = 1,
+}
+
+// 多参数fn
+export type Fn<T extends any[] = any[], K = void> = (...args: T) => K;
+
+// 单参数fn
+export type SingleFn<T = unknown, K = void> = Fn<[T], K>;
+
+export type Compare<T> = Fn<[T, T], ComparatorThan>;
+
+export type SortKey<T> =
+  | keyof T
+  | {
+      key: keyof T;
+      order?: SortOrder;
+      transform?: (val: any) => any;
+      skipIf?: (value: any) => boolean;
+      compare?: Compare<any>;
+    };
+
+export type MergeSortOps<T> = {
+  order?: SortOrder;
+  sortKeys?: SortKey<T>[];
+  compare?: Compare<T>;
+  sortChild?: boolean;
+  childField?: keyof T;
 };

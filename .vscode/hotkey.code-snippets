@@ -1,0 +1,98 @@
+{
+  // Place your 全局 snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and
+  // description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope
+  // is left empty or omitted, the snippet gets applied to all languages. The prefix is what is
+  // used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+  // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders.
+  // Placeholders with the same ids are connected.
+  // Example:
+  // "Print to console": {
+  // 	"scope": "javascript,typescript",
+  // 	"prefix": "log",
+  // 	"body": [
+  // 		"console.log('$1');",
+  // 		"$2"
+  // 	],
+  // 	"description": "Log output to console"
+  // }
+  "Print to console": {
+    "scope": "javascript,javascriptreact,typescript,typescriptreact,",
+    "prefix": "cg",
+    "body": ["console.log($1);"],
+    "description": "Log output to console"
+  },
+  "useDispatch": {
+    "scope": "typescript,typescriptreact,",
+    "prefix": "udh",
+    "body": ["const dispatch = useDispatch();"],
+    "description": "Log dispatch"
+  },
+  "useLocation": {
+    "scope": "typescript,typescriptreact,",
+    "prefix": "ulh",
+    "body": ["const location = useLocation();"],
+    "description": "Log location"
+  },
+  "useState": {
+    "scope": "typescript,typescriptreact,",
+    "prefix": "ust",
+    "body": ["const [state${1:Name}, set${1:Name}] = useState<${2:number}>($3);"],
+    "description": "Log location"
+  },
+  "import styles.scss": {
+    "scope": "typescript,typescriptreact,",
+    "prefix": "iss",
+    "body": ["import styles from './styles.scss';"],
+    "description": "Log location"
+  },
+  "className": {
+    "scope": "typescript,typescriptreact,",
+    "prefix": "cln",
+    "body": ["className={styles${1}}"],
+    "description": "Log location"
+  },
+  "try catch": {
+    "scope": "typescript,typescriptreact,",
+    "prefix": "tr",
+    "body": [" try {", "} catch (error) {", "console.error(error);", "message.error(error + '');", "}"],
+    "description": "Log location"
+  },
+  "Comment": {
+    "scope": "javascript,javascriptreact,typescript,typescriptreact,",
+    "prefix": "//",
+    "body": ["/*", " * $1", " */"],
+    "description": "Log output to console"
+  },
+  "Create tsx page": {
+    "scope": "typescriptreact,",
+    "prefix": "xp",
+    "body": [
+      "import React, { useEffect, useState } from 'react';",
+      "import styles from './styles.scss';\n",
+      "export interface ${1:${TM_FILENAME_BASE}}Props {}\n",
+      "const ${1:${TM_FILENAME_BASE}}: React.FC<${1:${TM_FILENAME_BASE}}Props> = () => {",
+      "  return <div className={styles.wrapper}>${1:${TM_FILENAME_BASE}}</div>;",
+      "};\n",
+      "export default ${1:${TM_FILENAME_BASE}};"
+    ],
+    "description": "Tsx page 模版"
+  },
+  "console.log(JSON.parse(JSON.stringify()))": {
+    "scope": "javascript,javascriptreact,typescript,typescriptreact,",
+    "prefix": "cj",
+    "body": ["console.log(JSON.parse(JSON.stringify($1)));"],
+    "description": "Log output to console"
+  },
+  "import styles.less": {
+    "scope": "typescript,typescriptreact,",
+    "prefix": "ill",
+    "body": ["import styles from './index.less';"],
+    "description": "Log location"
+  },
+  "import classnames": {
+    "scope": "javascript,javascriptreact,typescript,typescriptreact,",
+    "prefix": "cs",
+    "body": ["import cls from \"classnames\";"],
+    "description": "Log location"
+  }
+}
