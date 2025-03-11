@@ -11,3 +11,31 @@ export enum TreeLevel {
   Five,
   Six,
 }
+
+export enum Operator {
+  // 基础比较
+  LESS_THAN, // 小于
+  LESS_THAN_OR_EQUAL, // 小于等于
+  EQUAL, // 等于
+  NOT_EQUAL, // 不等于
+  GREATER_THAN_OR_EQUAL, // 大于等于
+  GREATER_THAN, // 大于
+  // 字符串匹配
+  START_WITH, // 以某值开头
+  END_WITH, // 以某值结尾
+  CONTAINS, // 包含某值
+  // 集合判断
+  IN, // 在集合内
+  NOT_IN, // 不在集合内
+  // 范围判断
+  BETWEEN, // 在区间内 [min, max]
+  // 位运算
+  BITWISE_ANY, // 位与结果>0（存在共同位）
+  BITWISE_ZERO, // 位与结果=0（无共同位）
+  BITWISE_ALL, // 位与结果=目标值（所有位匹配）
+  // 正则匹配
+  REGEX, // 正则表达式匹配
+  // 空值判断
+  IS_NULL, // 是 null/undefined
+  IS_NOT_NULL, // 非 null/undefined
+}

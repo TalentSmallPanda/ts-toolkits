@@ -14,6 +14,7 @@ module.exports = {
     "plugin:import/typescript",
     "plugin:prettier/recommended",
   ],
+  ignorePatterns: ["dist/**/*"],
   rules: {
     "prettier/prettier": [
       "error",
