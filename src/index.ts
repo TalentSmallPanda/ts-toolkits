@@ -6,6 +6,7 @@ export { default as HttpUtils } from "./utils/http.utils";
 export { default as NumberUtils } from "./utils/number.utils";
 export { default as ObjectUtils } from "./utils/object.utils";
 export { default as QueryUtils } from "./utils/query.utils";
+export { default as RandomUtils } from "./utils/random.utils";
 export { default as SortUtils } from "./utils/sort.utils";
 export { default as StringUtils } from "./utils/string.utils";
 export { default as TreeUtils } from "./utils/tree.utils";
