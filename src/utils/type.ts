@@ -13,14 +13,14 @@ export type BaseTreeData<T> = T & {
 };
 
 export type BaseTreeItem = {
-  isLast?: boolean;
-  expanded?: boolean;
-  idxs: number[];
-  level: number;
-  lastArray: number[];
-  isFather: boolean;
-  uniKey: string;
-  children: any[];
+  _idxs: number[];
+  _level: number;
+  _lastArray: number[];
+  _isFather: boolean;
+  _uniKey: string;
+  _isLast?: boolean;
+  _expanded?: boolean;
+  children?: BaseTreeItem[];
   [key: string]: any;
 };
 

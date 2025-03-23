@@ -15,6 +15,16 @@ export default class TreeUtils {
     list: T[],
     expandLevel = -1,
     hasUniKey = false,
+    childField = "children" as keyof T
+  ): TreeItem<T>[] {
+    return this.init(list, expandLevel, hasUniKey, childField);
+  }
+
+  public static init<T>(
+    list: T[],
+    expandLevel = -1,
+    hasUniKey = false,
+    childField: keyof T,
     depth = TreeLevel.One,
     idxs: number[] = [],
     lastArray: number[] = []
@@ -26,16 +36,16 @@ export default class TreeUtils {
       const indexs = idxs.concat([index]);
       const isLast = index === length - 1;
       const curLtArray = lastArray.concat([isLast ? IsLast.T : IsLast.F]);
-      item.idxs = indexs;
-      item.level = depth;
-      item.lastArray = curLtArray;
-      item.isFather = ArrayUtils.isNotEmpty(item.children);
-      item.expanded = depth <= expandLevel;
+      item._idxs = indexs;
+      item._level = depth;
+      item._lastArray = curLtArray;
+      item._isFather = ArrayUtils.isNotEmpty(item[childField] as T[]);
+      item._expanded = depth <= expandLevel;
       if (hasUniKey) {
-        item.uniKey = indexs.join("-");
+        item._uniKey = indexs.join("-");
       }
-      item.children = ArrayUtils.isNotEmpty(item.children)
-        ? this.initTree(item.children, expandLevel, hasUniKey, depth + 1, indexs, curLtArray)
+      item.children = ArrayUtils.isNotEmpty(item[childField] as T[])
+        ? this.init(item[childField] as T[], expandLevel, hasUniKey, childField, depth + 1, indexs, curLtArray)
         : [];
       list1.push(item);
     }
@@ -80,10 +90,11 @@ export default class TreeUtils {
    *  @param key:  the key of the node in the tree structure data that is used to determine whether the node is expanded or not
    *  @return:  the tree structure data with the expanded status set
    */
-  public static expandTree<T extends BaseTreeItem, K = T>(
+  public static expandTree<T = any>(
     list: T[],
     expands: string[] | number,
-    key?: typeof expands extends number ? never : keyof K
+    expandField?: keyof T,
+    key?: typeof expands extends number ? never : keyof T
   ): T[] {
     const newSortRows: T[] = [];
     const loop = (array: T[], depth = TreeLevel.One) => {
@@ -96,7 +107,7 @@ export default class TreeUtils {
         } else {
           shouldExpand = depth <= expands;
         }
-        item.expanded = shouldExpand;
+        item[expandField ?? "_expanded"] = shouldExpand;
         newSortRows.push(item);
         if (shouldExpand && ArrayUtils.isNotEmpty(item.children)) {
           const children: T[] = item.children;
@@ -203,7 +214,7 @@ export default class TreeUtils {
     field: keyof T,
     value: any
   ): T[] {
-    const list = data.filter((o) => o.level === TreeLevel.One);
+    const list = data.filter((o) => o._level === TreeLevel.One);
     const item = this.getTreeItemByIdxs(list, idxs);
     if (ObjectUtils.hasValue(item)) {
       item[field] = value;
@@ -218,7 +229,7 @@ export default class TreeUtils {
    * @returns The updated tree data after the updates.
    */
   public static updateTreeItemsByIdxs<T extends BaseTreeItem>(data: T[], updates: UpdateOperation<T>[]): T[] {
-    const list = data.filter((o) => o.level === TreeLevel.One);
+    const list = data.filter((o) => o._level === TreeLevel.One);
     for (const update of updates) {
       const item = this.getTreeItemByIdxs(list, update.idxs);
       if (ObjectUtils.hasValue(item)) {
@@ -235,7 +246,7 @@ export default class TreeUtils {
    * @returns The updated tree data after deletion of specified item.
    */
   public static deleteTreeItemByIdxs<T extends BaseTreeItem>(data: T[], idxs: number[]): T[] {
-    const list = data.filter((o) => o.level === TreeLevel.One);
+    const list = data.filter((o) => o._level === TreeLevel.One);
     const parent = this.getTreeItemByIdxs(list, idxs.slice(0, -1)) as T;
     if (ObjectUtils.hasValue(parent) && ArrayUtils.isNotEmpty(parent.children)) {
       parent.children = parent.children.filter((_, i) => i !== idxs[idxs.length - 1]);
