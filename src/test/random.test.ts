@@ -99,12 +99,12 @@ describe("RandomUtils", () => {
   describe("getEmail", () => {
     it("应生成格式正确的电子邮件地址", () => {
       const domain = "example.com";
-      const result = RandomUtils.getRandomEmail(domain);
+      const result = RandomUtils.getEmail(domain);
       expect(result).toMatch(/^[a-zA-Z0-9._%+-]+@example\.com$/);
     });
 
     it("应使用默认域名", () => {
-      const result = RandomUtils.getRandomEmail();
+      const result = RandomUtils.getEmail();
       expect(result).toMatch(/^[a-zA-Z0-9._%+-]+@qq\.com$/);
     });
   });
@@ -125,9 +125,9 @@ describe("RandomUtils", () => {
     });
   });
 
-  describe("getUUID", () => {
+  describe("getUuid", () => {
     it("应生成有效的UUID", () => {
-      const result = RandomUtils.getUUID();
+      const result = RandomUtils.getUuid();
       expect(result).toMatch(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{0,4}-[0-9a-fA-F]{0,12}$/);
     });
   });

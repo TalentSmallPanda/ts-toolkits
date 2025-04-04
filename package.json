@@ -1,6 +1,6 @@
 {
   "name": "ts-toolkits",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "description": "Common typescript toolkits",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

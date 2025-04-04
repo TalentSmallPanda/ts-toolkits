@@ -45,7 +45,7 @@ export default class RandomUtils {
     return `${area}-${prefix}-${line}`;
   }
 
-  static getRandomEmail(domain = "qq.com"): string {
+  static getEmail(domain = "qq.com"): string {
     const username = this.getString(this.getInt(5, 15));
     return `${username}@${domain}`;
   }
@@ -57,7 +57,7 @@ export default class RandomUtils {
     return new Date(randomTime);
   }
 
-  static getUUID(): string {
+  static getUuid(): string {
     if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
       return crypto.randomUUID();
     }
