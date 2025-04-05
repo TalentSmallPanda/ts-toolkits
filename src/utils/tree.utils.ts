@@ -1,15 +1,19 @@
-import { ArrayUtils, IsLast, ObjectUtils, TreeLevel } from "..";
+import { ArrayUtils, IsLast, IsVisible, ObjectUtils, TreeLevel } from "..";
 import { BaseTreeData, BaseTreeItem, DynamicFields, ListToTreeOps, TreeItem, UpdateOperation } from "./type";
 
 export default class TreeUtils {
   /**
-   *  @description:  initTree  traverse the tree structure data and set the necessary properties
-   *  @param list:  the tree structure data
-   *  @param expandLevel:  the initial expanded level
-   *  @param depth:  the current node depth
-   *  @param idxs:  the current node index array
-   *  @param lastArray:  the last node index array
-   *  @return:  the tree structure data with the necessary properties set
+   * 初始化树形结构
+   *
+   * 此方法用于将给定的列表转换为树形结构它接受一个列表、展开级别、是否具有唯一键和子字段名称作为参数
+   * 展开级别的默认值为 -1，表示全部展开如果树节点需要基于唯一键进行标识，则可以设置 hasUniKey 为 true
+   * 子字段名称可以根据需要进行更改，默认为 'children'
+   *
+   * @param list - 需要转换为树形结构的列表
+   * @param expandLevel - 树的展开级别，默认为 -1，表示全部不展开
+   * @param hasUniKey - 树节点是否具有唯一键，默认为 false
+   * @param childField - 子节点的字段名称，默认为 'children'
+   * @returns 返回转换后的树形结构数组
    */
   public static initTree<T>(
     list: T[],
@@ -20,16 +24,40 @@ export default class TreeUtils {
     return this.init(list, expandLevel, hasUniKey, childField);
   }
 
+  /**
+   * 初始化扁平树结构
+   *
+   * 此方法用于将一个扁平的列表转换成树形结构它可以应用于各种类型的对象列表，
+   * 只要这些对象包含适当的属性来表示层级关系通过传入不同的参数，可以控制树形结构的
+   * 展开级别、是否存在唯一键以及子节点的字段名称
+   *
+   * @param list 扁平列表，包含一系列对象，这些对象应包含指定的属性来表示父-child关系
+   * @param expandLevel 展开树形结构的级别默认为-1，表示全部不展开
+   * @param hasUniKey 指示对象中是否包含唯一的标识符如果为true，每个对象都应有一个唯一的键值
+   * @param childField 对象中表示子节点的属性名默认为'children'，即每个对象都应有这个属性来存储其子节点
+   * @returns 返回一个树形结构的数组，每个元素都是一个带有层级关系的节点
+   */
+  public static initFlatTree<T>(
+    list: T[],
+    expandLevel = -1,
+    hasUniKey = false,
+    childField = "children" as keyof T
+  ): TreeItem<T>[] {
+    return this.init(list, expandLevel, hasUniKey, childField, true);
+  }
+
   public static init<T>(
     list: T[],
     expandLevel = -1,
     hasUniKey = false,
     childField: keyof T,
+    isFlat = false,
+    array: TreeItem<T>[] = [],
     depth = TreeLevel.One,
     idxs: number[] = [],
-    lastArray: number[] = []
+    lastArray: number[] = [],
+    visible = IsVisible.Y
   ): TreeItem<T>[] {
-    const list1: TreeItem<T>[] = [];
     const length = list.length;
     for (let index = 0; index < length; index++) {
       const item = list[index] as TreeItem<T>;
@@ -38,18 +66,36 @@ export default class TreeUtils {
       const curLtArray = lastArray.concat([isLast ? IsLast.T : IsLast.F]);
       item._idxs = indexs;
       item._level = depth;
-      item._lastArray = curLtArray;
-      item._isFather = ArrayUtils.isNotEmpty(item[childField] as T[]);
+      item._visible = visible;
       item._expanded = depth <= expandLevel;
+      item._isFather = ArrayUtils.isNotEmpty(item[childField]);
+      item._lastArray = curLtArray;
       if (hasUniKey) {
         item._uniKey = indexs.join("-");
       }
-      item.children = ArrayUtils.isNotEmpty(item[childField] as T[])
-        ? this.init(item[childField] as T[], expandLevel, hasUniKey, childField, depth + 1, indexs, curLtArray)
+      if (isFlat) {
+        array.push(item);
+      }
+      const childList = ArrayUtils.isNotEmpty(item[childField])
+        ? this.init(
+            item[childField],
+            expandLevel,
+            hasUniKey,
+            childField,
+            isFlat,
+            isFlat ? array : [],
+            depth + 1,
+            indexs,
+            curLtArray,
+            item._expanded ? IsVisible.Y : IsVisible.N
+          )
         : [];
-      list1.push(item);
+      if (!isFlat) {
+        item.children = childList;
+        array.push(item);
+      }
     }
-    return list1;
+    return array;
   }
 
   /**

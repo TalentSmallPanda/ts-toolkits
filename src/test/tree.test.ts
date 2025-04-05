@@ -1,4 +1,4 @@
-import { IsLast, TreeLevel } from "../utils/enum";
+import { IsLast, IsVisible, TreeLevel } from "../utils/enum";
 import TreeUtils from "../utils/tree.utils";
 import { ListToTreeOps, UpdateOperation } from "../utils/type";
 
@@ -25,6 +25,7 @@ describe("TreeUtils", () => {
       expect(result[1].children[0]._level).toBe(TreeLevel.Two);
       expect(result[1].children[0]._expanded).toBe(true);
       expect(result[1].children[0]._uniKey).toBe("1-0");
+      expect(result[1].children[0]._visible).toBe(IsVisible.Y);
 
       //Check lastArray
       expect(result[0]._lastArray).toEqual([IsLast.F]);
@@ -52,6 +53,96 @@ describe("TreeUtils", () => {
       expect(result.length).toBe(2);
       expect(result[0].children).toEqual([]);
       expect(result[1].children).toEqual([]);
+    });
+  });
+
+  describe("initFlatTree", () => {
+    it("should initialize a flat tree structure correctly", () => {
+      const data = [
+        { id: 1, children: [{ id: 11 }, { id: 12 }] },
+        { id: 2, children: [{ id: 21 }] },
+      ];
+
+      const result = TreeUtils.initFlatTree(data, 1, true);
+
+      expect(result.length).toBe(5);
+      expect(result[0].id).toBe(1);
+      expect(result[0]._level).toBe(TreeLevel.One);
+      expect(result[0]._expanded).toBe(true);
+
+      expect(result[1].id).toBe(11);
+      expect(result[1]._level).toBe(TreeLevel.Two);
+      expect(result[1]._expanded).toBe(true);
+      expect(result[1]._visible).toBe(IsVisible.Y);
+
+      expect(result[2].id).toBe(12);
+      expect(result[2]._level).toBe(TreeLevel.Two);
+      expect(result[2]._expanded).toBe(true);
+
+      expect(result[3].id).toBe(2);
+      expect(result[3]._level).toBe(TreeLevel.One);
+      expect(result[3]._expanded).toBe(true);
+
+      // Check _uniKey
+      expect(result[0]._uniKey).toBe("0");
+      expect(result[1]._uniKey).toBe("0-0");
+      expect(result[2]._uniKey).toBe("0-1");
+      expect(result[3]._uniKey).toBe("1");
+
+      // Check _lastArray
+      expect(result[0]._lastArray).toEqual([IsLast.F]);
+      expect(result[1]._lastArray).toEqual([IsLast.F, IsLast.F]);
+      expect(result[2]._lastArray).toEqual([IsLast.F, IsLast.T]);
+      expect(result[3]._lastArray).toEqual([IsLast.T]);
+
+      // Check _idxs
+      expect(result[0]._idxs).toEqual([0]);
+      expect(result[1]._idxs).toEqual([0, 0]);
+      expect(result[2]._idxs).toEqual([0, 1]);
+      expect(result[3]._idxs).toEqual([1]);
+    });
+
+    it("should handle empty data correctly", () => {
+      const result = TreeUtils.initFlatTree([]);
+      expect(result).toEqual([]);
+    });
+
+    it("should handle data with expandLevel correctly", () => {
+      const data = [
+        { id: 1, children: [{ id: 11 }, { id: 12 }] },
+        { id: 2, children: [{ id: 21 }] },
+      ];
+
+      const result = TreeUtils.initFlatTree(data);
+      expect(result.length).toBe(5);
+      expect(result[0]._visible).toBe(IsVisible.Y);
+      expect(result[1]._visible).toBe(IsVisible.N);
+      expect(result[3]._visible).toBe(IsVisible.Y);
+      expect(result[4]._visible).toBe(IsVisible.N);
+    });
+
+    it("should handle data with expanded correctly", () => {
+      const data = [
+        { id: 1, children: [{ id: 11 }, { id: 12 }] },
+        { id: 2, children: [{ id: 21 }] },
+      ];
+
+      const result = TreeUtils.initFlatTree(data, 0);
+      expect(result.length).toBe(5);
+      expect(result[0]._expanded).toBe(true);
+      expect(result[0]._visible).toBe(IsVisible.Y);
+      expect(result[1]._expanded).toBe(false);
+      expect(result[1]._visible).toBe(IsVisible.Y);
+      expect(result[3]._expanded).toBe(true);
+      expect(result[3]._visible).toBe(IsVisible.Y);
+    });
+
+    it("should handle data with no children correctly", () => {
+      const data = [{ id: 1 }, { id: 2 }];
+      const result = TreeUtils.initFlatTree(data);
+      expect(result.length).toBe(2);
+      expect(result[0].children).toBeUndefined();
+      expect(result[1].children).toBeUndefined();
     });
   });
 

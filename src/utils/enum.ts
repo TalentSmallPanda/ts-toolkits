@@ -3,6 +3,11 @@ export enum IsLast {
   F = 0,
 }
 
+export enum IsVisible {
+  Y = "Y",
+  N = "N",
+}
+
 export enum TreeLevel {
   One = 0,
   Two,

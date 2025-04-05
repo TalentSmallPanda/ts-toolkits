@@ -20,6 +20,7 @@ export type BaseTreeItem = {
   _uniKey: string;
   _isLast?: boolean;
   _expanded?: boolean;
+  _visible?: string;
   children?: BaseTreeItem[];
   [key: string]: any;
 };
