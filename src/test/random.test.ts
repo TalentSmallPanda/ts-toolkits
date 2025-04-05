@@ -85,7 +85,7 @@ describe("RandomUtils", () => {
     it("应处理默认范围", () => {
       const result = RandomUtils.getFloat();
       expect(result).toBeGreaterThanOrEqual(0);
-      expect(result).toBeLessThanOrEqual(1);
+      expect(result).toBeLessThanOrEqual(100);
     });
   });
 
@@ -122,6 +122,66 @@ describe("RandomUtils", () => {
       const result = RandomUtils.getDate();
       const now = new Date();
       expect(result.getTime()).toBeLessThanOrEqual(now.getTime());
+    });
+  });
+
+  describe("getEnName", () => {
+    it("应生成带有首字母大写的名字和姓氏", () => {
+      const result = RandomUtils.getEnName();
+      const [firstName, lastName] = result.split(" ");
+
+      // 检查名字和姓氏存在且首字母大写
+      expect(firstName).toBeDefined();
+      expect(lastName).toBeDefined();
+      expect(firstName[0]).toBe(firstName[0].toUpperCase());
+      expect(lastName[0]).toBe(lastName[0].toUpperCase());
+
+      // 检查长度范围
+      expect(firstName.length).toBeGreaterThanOrEqual(3);
+      expect(firstName.length).toBeLessThanOrEqual(7);
+      expect(lastName.length).toBeGreaterThanOrEqual(4);
+      expect(lastName.length).toBeLessThanOrEqual(10);
+    });
+
+    it("应只包含字母和空格", () => {
+      const result = RandomUtils.getEnName();
+      // 检查只包含字母和一个空格
+      expect(result).toMatch(/^[A-Za-z]+ [A-Za-z]+$/);
+    });
+  });
+
+  describe("getEnAddress", () => {
+    it("应生成符合格式的随机地址", () => {
+      const result = RandomUtils.getEnAddress();
+      const parts = result.split(", ");
+
+      // 检查格式：街道, 城市, 州+邮编
+      expect(parts.length).toBe(3);
+      const [street, city, stateZip] = parts;
+
+      // 检查街道部分
+      const streetParts = street.split(" ");
+      expect(streetParts.length).toBe(3); // 数字 + 街道名 + "St"
+      const streetNumber = parseInt(streetParts[0], 10);
+      expect(streetNumber).toBeGreaterThanOrEqual(1);
+      expect(streetNumber).toBeLessThanOrEqual(999);
+      expect(streetParts[2]).toBe("St");
+
+      // 检查城市长度
+      expect(city.length).toBeGreaterThanOrEqual(4);
+      expect(city.length).toBeLessThanOrEqual(8);
+
+      // 检查州和邮编
+      const [state, zipCode] = stateZip.split(" ");
+      expect(state.length).toBe(2);
+      expect(parseInt(zipCode, 10)).toBeGreaterThanOrEqual(10000);
+      expect(parseInt(zipCode, 10)).toBeLessThanOrEqual(99999);
+    });
+
+    it("应只包含字母、数字、空格和逗号", () => {
+      const result = RandomUtils.getEnAddress();
+      // 检查只包含合法字符
+      expect(result).toMatch(/^[0-9]+ [A-Za-z]+ St, [A-Za-z]+, [A-Z]{2} [0-9]{5}$/);
     });
   });
 

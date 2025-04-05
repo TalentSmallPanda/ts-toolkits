@@ -1,5 +1,6 @@
 export default class RandomUtils {
   private static readonly DEFAULT_CHARACTERS: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  private static readonly LOWERCASE_CHARACTERS: string = "abcdefghijklmnopqrstuvwxyz";
 
   static getInt(min = 0, max: number = Number.MAX_SAFE_INTEGER): number {
     [min, max] = [Math.ceil(min), Math.floor(max)];
@@ -34,8 +35,9 @@ export default class RandomUtils {
     return Math.random() >= 0.5;
   }
 
-  static getFloat(min = 0, max = 1): number {
-    return Math.random() * (max - min) + min;
+  static getFloat(min = 0, max = 100, precision = 2): number {
+    const factor = Math.pow(10, precision);
+    return Math.round((Math.random() * (max - min) + min) * factor) / factor;
   }
 
   static getPhone(): string {
@@ -55,6 +57,27 @@ export default class RandomUtils {
     const endTime = end.getTime();
     const randomTime = startTime + Math.random() * (endTime - startTime);
     return new Date(randomTime);
+  }
+
+  static getEnName(): string {
+    const str = this.LOWERCASE_CHARACTERS;
+    const firstNameLength = this.getInt(3, 7);
+    const lastNameLength = this.getInt(4, 10);
+    const firstName = this.getString(firstNameLength, str).replace(/^./, (c) => c.toUpperCase());
+    const lastName = this.getString(lastNameLength, str).replace(/^./, (c) => c.toUpperCase());
+    return `${firstName} ${lastName}`;
+  }
+
+  static getEnAddress(): string {
+    const str = this.LOWERCASE_CHARACTERS;
+    const streetNumber = this.getInt(1, 999);
+    const streetNameLength = this.getInt(5, 10);
+    const streetName = this.getString(streetNameLength, str).replace(/^./, (c) => c.toUpperCase());
+    const cityLength = this.getInt(4, 8);
+    const city = this.getString(cityLength, str).replace(/^./, (c) => c.toUpperCase());
+    const state = this.getString(2, str).toUpperCase();
+    const zipCode = this.getInt(10000, 99999);
+    return `${streetNumber} ${streetName} St, ${city}, ${state} ${zipCode}`;
   }
 
   static getUuid(): string {

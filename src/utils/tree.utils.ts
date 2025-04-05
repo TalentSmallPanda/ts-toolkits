@@ -1,5 +1,5 @@
-import { ArrayUtils, IsLast, IsVisible, ObjectUtils, TreeLevel } from "..";
-import { BaseTreeData, BaseTreeItem, DynamicFields, ListToTreeOps, TreeItem, UpdateOperation } from "./type";
+import { ArrayUtils, IsLast, IsVisible, ObjectUtils, RandomUtils, TreeLevel } from "..";
+import { BaseTreeData, BaseTreeItem, FieldItem, ListToTreeOps, MergeFields, TreeItem, UpdateOperation } from "./type";
 
 export default class TreeUtils {
   /**
@@ -107,13 +107,13 @@ export default class TreeUtils {
    *  @param idxs:  the array of indexs of the parent node
    *  @return:  the tree structure data
    */
-  public static createTree<T extends string[]>(
-    fields = ["id"] as T,
+  public static createTree<T extends [FieldItem, ...FieldItem[]]>(
+    fields = ["id"] as unknown as T,
     maxLevel = 2,
     num = 10,
     depth = 0,
     idxs: number[] = []
-  ): BaseTreeData<DynamicFields<T>>[] {
+  ): BaseTreeData<MergeFields<T>>[] {
     if (depth > maxLevel) return [];
     return Array(num)
       .fill("")
@@ -122,7 +122,40 @@ export default class TreeUtils {
         const uniStr = indexs.join("_");
         const obj: any = {};
         fields.forEach((field) => {
-          obj[field] = `${field}_${uniStr}`;
+          if (typeof field === "string") {
+            obj[field] = `${field}_${uniStr}`;
+          } else if (field !== null && typeof field === "object") {
+            const [fieldName, fieldValue] = Object.entries(field)[0];
+            let val: unknown;
+            if (typeof fieldValue === "number") {
+              if (Number.isInteger(fieldValue)) {
+                val = RandomUtils.getInt();
+              } else {
+                const decimalPlaces = (fieldValue.toString().split(".")[1] || "").length; // 获取小数位数
+                const precision = decimalPlaces > 0 ? decimalPlaces : 2;
+                val = RandomUtils.getFloat(0, 1000, precision);
+              }
+            } else if (typeof fieldValue === "boolean") {
+              val = RandomUtils.getBoolean();
+            } else if (typeof fieldValue === "string") {
+              if (fieldValue === "uuid") {
+                val = RandomUtils.getUuid();
+              } else if (fieldValue === "email") {
+                val = RandomUtils.getEmail();
+              } else if (fieldValue === "img") {
+                val = RandomUtils.getImage();
+              } else if (fieldValue === "name") {
+                val = RandomUtils.getEnName();
+              } else if (fieldValue === "address") {
+                val = RandomUtils.getEnAddress();
+              } else {
+                val = RandomUtils.getString();
+              }
+            } else {
+              val = `${field}_${uniStr}`;
+            }
+            obj[fieldName] = val;
+          }
         });
         obj.children = this.createTree(fields, maxLevel, num, depth + 1, indexs);
         return obj;

@@ -166,7 +166,21 @@ describe("TreeUtils", () => {
     });
 
     it("should handle empty fields correctly", () => {
-      const result = TreeUtils.createTree([], 2, 2);
+      const result = TreeUtils.createTree(
+        [
+          "id",
+          { name: "name" },
+          { address: "address" },
+          { img: "img" },
+          { uuid: "uuid" },
+          { email: "email" },
+          { count: 1 },
+          { price: 1.11 },
+          { idShow: true },
+        ],
+        2,
+        2
+      );
       expect(result.length).toBe(2);
       expect(result[0].children.length).toBe(2);
       expect(result[0].children[0].children.length).toBe(2);

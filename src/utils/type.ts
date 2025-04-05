@@ -74,9 +74,25 @@ export type QueryChunkOps<T> = {
   sourceChildField?: keyof T;
 };
 
-export type DynamicFields<Fields extends string[]> = {
-  [K in Fields[number]]: string;
-};
+export type Primitive = string | number | boolean;
+
+type FieldObject = Record<string, Primitive>;
+
+export type FieldItem = string | FieldObject;
+
+type InferField<T> = T extends string
+  ? { [K in T]: string }
+  : T extends object
+  ? { [K in keyof T]: T[K] extends Primitive ? T[K] : never }
+  : never;
+
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
+
+type FlattenIntersection<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
+
+export type MergeFields<T> = T extends any[]
+  ? FlattenIntersection<UnionToIntersection<T extends (infer U)[] ? (U extends any ? InferField<U> : never) : never>>
+  : InferField<T>;
 
 export enum ComparatorThan {
   LessThan = -1,
