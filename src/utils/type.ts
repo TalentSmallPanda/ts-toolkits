@@ -1,4 +1,4 @@
-import { Operator, SortOrder } from "./enum";
+import { ChildQueryMode, Operator, SortOrder } from "./enum";
 
 export type Nullable = null | undefined;
 export type BlankString = null | undefined | "";
@@ -58,7 +58,7 @@ export interface BaseCondition<T, V = unknown> {
   operator: Operator;
   value?: string | number | (string | number)[];
   ignoreCase?: boolean;
-  compare?: (itemValue: string | number, value: V) => boolean;
+  compare?: (itemValue: string | number, value: V, item: T) => boolean;
 }
 
 export interface ConditionGroup<T> {
@@ -69,9 +69,11 @@ export interface ConditionGroup<T> {
 export type Condition<T> = BaseCondition<T> | ConditionGroup<T>;
 
 export type QueryChunkOps<T> = {
-  chunkSize?: number;
-  isHdChild?: boolean;
-  sourceChildField?: keyof T;
+  chunkSize?: number; // 分块大小
+  isHdChild?: boolean; // 是否处理子项
+  sourceChildField?: keyof T | ((item: T) => keyof T); // 子项字段名或动态字段函数
+  childQueryMode?: ChildQueryMode; // 子项查询模式
+  onItemMatch?: (params: { item: T; isMatch: boolean; isMatchChild: boolean; childList: T[] }) => boolean; // 回调函数，决定是否保留父项
 };
 
 export type Primitive = string | number | boolean;

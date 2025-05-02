@@ -8,8 +8,8 @@ export default class StringUtils {
   public static readonly INDEX_NOT_FOUND: number = -1;
 
   /**
-   * check current string is empty.
-   * @param str
+   * 检查当前字符串是否为空。
+   * @param str 要检查的字符串
    * @example StringUtils.isEmpty(null)      = true
    * @example StringUtils.isEmpty(undefined) = true
    * @example StringUtils.isEmpty("")        = true
@@ -22,8 +22,8 @@ export default class StringUtils {
   }
 
   /**
-   * check current string is not empty.
-   * @param str
+   * 检查当前字符串是否非空。
+   * @param str 要检查的字符串
    * @example StringUtils.isNotEmpty(null)      = false
    * @example StringUtils.isNotEmpty(undefined) = false
    * @example StringUtils.isNotEmpty("")        = false
@@ -36,8 +36,8 @@ export default class StringUtils {
   }
 
   /**
-   * check current string is blank.
-   * @param str
+   * 检查当前字符串是否为空白。
+   * @param str 要检查的字符串
    * @example StringUtils.isBlank(null)      = true
    * @example StringUtils.isBlank(undefined) = true
    * @example StringUtils.isBlank("")        = true
@@ -50,8 +50,8 @@ export default class StringUtils {
   }
 
   /**
-   * check current string is not blank.
-   * @param str
+   * 检查当前字符串是否非空白。
+   * @param str 要检查的字符串
    * @example StringUtils.isNotBlank(null)      = false
    * @example StringUtils.isNotBlank(undefined) = false
    * @example StringUtils.isNotBlank("")        = false
@@ -64,8 +64,8 @@ export default class StringUtils {
   }
 
   /**
-   * Removes all leading and trailing white-space characters from the current string.
-   * @param str
+   * 去除当前字符串的所有前导和尾随空白字符。
+   * @param str 要处理的字符串
    * @example StringUtils.trim(null)        = null
    * @example StringUtils.trim(undefined)   = undefined
    * @example StringUtils.trim("")          = ""
@@ -81,8 +81,8 @@ export default class StringUtils {
   }
 
   /**
-   * Removes all leading and trailing white-space characters from the current string to null.
-   * @param str
+   * 去除当前字符串的所有前导和尾随空白字符，如果结果为空则返回null。
+   * @param str 要处理的字符串
    * @example StringUtils.trimToNull(null)             = null
    * @example StringUtils.trimToNull(undefined)        = null
    * @example StringUtils.trimToNull("")               = null
@@ -98,8 +98,8 @@ export default class StringUtils {
   }
 
   /**
-   * Removes all leading and trailing white-space characters from the current string to "".
-   * @param str
+   * 去除当前字符串的所有前导和尾随空白字符，如果结果为空则返回""。
+   * @param str 要处理的字符串
    * @example StringUtils.trimToNull(null)             = ""
    * @example StringUtils.trimToNull(undefined)        = ""
    * @example StringUtils.trimToNull("")               = ""
@@ -115,9 +115,9 @@ export default class StringUtils {
   }
 
   /**
-   * Strips any of a set of characters from the start and end of a String.
-   * @param str
-   * @param stripChars
+   * 从字符串的开头和结尾删除指定的字符集。
+   * @param str 要处理的字符串
+   * @param stripChars 要删除的字符集
    */
   public static strip(str: string | null, stripChars?: string): string | null {
     const tmp = this.stripStart(str, stripChars);
@@ -125,8 +125,8 @@ export default class StringUtils {
   }
 
   /**
-   * Strips whitespace from the start and end of a String returning null if the String is empty ("") after the strip.
-   * @param str
+   * 从字符串的开头和结尾删除空白，如果处理后的字符串为空("")则返回null。
+   * @param str 要处理的字符串
    */
   public static stripToNull(str: string): string | null {
     if (ObjectUtils.isNullOrUndefined(str)) {
@@ -137,8 +137,8 @@ export default class StringUtils {
   }
 
   /**
-   * Strips whitespace from the start and end of a String returning an empty String if null input.
-   * @param str
+   * 从字符串的开头和结尾删除空白，如果输入为null则返回空字符串。
+   * @param str 要处理的字符串
    */
   public static stripToEmpty(str: string): string {
     if (ObjectUtils.isNullOrUndefined(str)) {
@@ -149,9 +149,9 @@ export default class StringUtils {
   }
 
   /**
-   * Strips any of a set of characters from the start of a String.
-   * @param str
-   * @param stripChars
+   * 从字符串的开头删除指定的字符集。
+   * @param str 要处理的字符串
+   * @param stripChars 要删除的字符集
    * @example StringUtils.stripStart(null, *)          = null
    * @example StringUtils.stripStart("", *)            = ""
    * @example StringUtils.stripStart("abc", "")        = "abc"
@@ -182,9 +182,9 @@ export default class StringUtils {
   }
 
   /**
-   * Strips any of a set of characters from the end of a String.
-   * @param str
-   * @param stripChars
+   * 从字符串的结尾删除指定的字符集。
+   * @param str 要处理的字符串
+   * @param stripChars 要删除的字符集
    * @example StringUtils.stripEnd(null, *)          = null
    * @example StringUtils.stripEnd("", *)            = ""
    * @example StringUtils.stripEnd("abc", "")        = "abc"
@@ -214,9 +214,9 @@ export default class StringUtils {
   }
 
   /**
-   * Compares two CharSequences, returning true if they represent equal sequences of characters.
-   * @param str1
-   * @param str2
+   * 比较两个字符序列，如果它们表示相等的字符序列则返回true。
+   * @param str1 第一个字符串
+   * @param str2 第二个字符串
    * @example StringUtils.equal(null, null)              = true
    * @example StringUtils.equal(undefined, undefined)      = true
    * @example StringUtils.equal(undefined, null)          = false
@@ -242,9 +242,9 @@ export default class StringUtils {
   }
 
   /**
-   * Compares two CharSequences, returning true if they represent equal sequences of characters, ignoring case.
-   * @param str1
-   * @param str2
+   * 比较两个字符序列，如果它们表示相等的字符序列则返回true，忽略大小写。
+   * @param str1 第一个字符串
+   * @param str2 第二个字符串
    * @example StringUtils.equal(null, null)              = true
    * @example StringUtils.equal(undefined, undefined)      = true
    * @example StringUtils.equal(undefined, null)          = false
@@ -271,10 +271,10 @@ export default class StringUtils {
   }
 
   /**
-   * Finds the first index within a CharSequence, handling null.
-   * @param str
-   * @param searchStr
-   * @param startPos
+   * 在字符序列中查找第一个索引，处理null。
+   * @param str 源字符串
+   * @param searchStr 要查找的字符串
+   * @param startPos 开始位置
    * @example StringUtils.indexOf(null, *)         = -1
    * @example StringUtils.indexOf(undefined, *)         = -1
    * @example StringUtils.indexOf("", *)           = -1
@@ -296,10 +296,10 @@ export default class StringUtils {
   }
 
   /**
-   * Returns the index within seq of the first occurrence of the specified character, starting the search at the specified index.
-   * @param str
-   * @param searchStr
-   * @param position
+   * 返回指定字符在字符串中第一次出现的索引，从指定的索引开始搜索。
+   * @param str 源字符串
+   * @param searchStr 要查找的字符串
+   * @param position 开始位置
    * @example StringUtils.lastIndexOf("aFkyk", "k")          =4
    * @example StringUtils.lastIndexOf("a Fkyk", " ");        =1
    * @example StringUtils.lastIndexOf("aabaabaa", "b");      =5
@@ -318,9 +318,9 @@ export default class StringUtils {
   }
 
   /**
-   * Checks if CharSequence contains a search character, handling null.
-   * @param str
-   * @param searchStr
+   * 检查字符序列是否包含搜索字符，处理null。
+   * @param str 源字符串
+   * @param searchStr 要查找的字符串
    */
   public static contains(str: string, searchStr: string): boolean {
     if (ObjectUtils.isString(str) && ObjectUtils.isString(searchStr)) {
@@ -331,9 +331,9 @@ export default class StringUtils {
   }
 
   /**
-   * Checks if CharSequence contains a search CharSequence irrespective of case, handling null.
-   * @param str
-   * @param searchStr
+   * 检查字符序列是否包含搜索字符序列，忽略大小写，处理null。
+   * @param str 源字符串
+   * @param searchStr 要查找的字符串
    */
   public static containsIgnoreCase(str: string, searchStr: string): boolean {
     if (ObjectUtils.isString(str) && ObjectUtils.isString(searchStr)) {
@@ -344,10 +344,10 @@ export default class StringUtils {
   }
 
   /**
-   * Gets a substring from the specified String avoiding exceptions.
-   * @param str
-   * @param start
-   * @param end
+   * 从指定的字符串获取子字符串，避免异常。
+   * @param str 源字符串
+   * @param start 开始位置
+   * @param end 结束位置
    */
   public static subString(str: string, start: number, end?: number): string | null {
     if (
@@ -370,9 +370,9 @@ export default class StringUtils {
   }
 
   /**
-   * Determines whether the beginning of this string instance matches the specified string.
-   * @param str
-   * @param prefix
+   * 确定此字符串实例的开头是否与指定的字符串匹配。
+   * @param str 源字符串
+   * @param prefix 前缀字符串
    */
   public static startWith(str: string, prefix: string): boolean {
     if (!ObjectUtils.isString(str) || !ObjectUtils.isString(prefix)) {
@@ -382,9 +382,9 @@ export default class StringUtils {
   }
 
   /**
-   * Determines whether the beginning of this string instance matches the specified string irrespective of case.
-   * @param str
-   * @param prefix
+   * 确定此字符串实例的开头是否与指定的字符串匹配，忽略大小写。
+   * @param str 源字符串
+   * @param prefix 前缀字符串
    */
   public static startWithIgnoreCase(str: string, prefix: string): boolean {
     if (!ObjectUtils.isString(str) || !ObjectUtils.isString(prefix)) {
@@ -396,9 +396,9 @@ export default class StringUtils {
   }
 
   /**
-   *  Determines whether the end of this string instance matches the specified string.
-   * @param str
-   * @param suffix
+   * 确定此字符串实例的结尾是否与指定的字符串匹配。
+   * @param str 源字符串
+   * @param suffix 后缀字符串
    */
   public static endWith(str: string, suffix: string): boolean {
     if (!ObjectUtils.isString(str) || !ObjectUtils.isString(suffix)) {
@@ -408,9 +408,9 @@ export default class StringUtils {
   }
 
   /**
-   * Determines whether the end of this string instance matches the specified string irrespective of case.
-   * @param str
-   * @param suffix
+   * 确定此字符串实例的结尾是否与指定的字符串匹配，忽略大小写。
+   * @param str 源字符串
+   * @param suffix 后缀字符串
    */
   public static endWithIgnoreCase(str: string, suffix: string): boolean {
     if (!ObjectUtils.isString(str) || !ObjectUtils.isString(suffix)) {
@@ -422,15 +422,15 @@ export default class StringUtils {
   }
 
   /**
-   * check if current char is whitespace
-   * @param ch
+   * 检查当前字符是否为空白字符
+   * @param ch 要检查的字符
    */
   public static isWhitespace(ch: string): boolean {
     return " \f\n\r\t\v\u00A0\u2028\u2029".indexOf(ch) > -1;
   }
 
   /**
-   * Initializes a new string of the guid structure.
+   * 初始化一个新的GUID结构的字符串。
    */
   public static newGuid(): string {
     return (
@@ -449,13 +449,15 @@ export default class StringUtils {
     );
   }
 
+  /**
+   * 生成一个4位的16进制随机数
+   */
   private static S4() {
-    // tslint:disable-next-line:no-bitwise
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
   }
 
   /**
-   * JavaScript convert string to snake_case.
+   * JavaScript将字符串转换为蛇形命名法。
    * @example console.log(toSnakeCase('string')); // => string
    * @example console.log(toSnakeCase('camelCase')); // => camel_case
    * @example console.log(toSnakeCase('param-case')); // => param_case
@@ -491,7 +493,7 @@ export default class StringUtils {
   }
 
   /**
-   * Replaces all text find in a string.
+   * 替换字符串中找到的所有文本。
    * @example StringUtils.replaceAll(null, "a", "b")    = null;
    * @example StringUtils.replaceAll(" ", " ", "a")    = "a";
    * @example StringUtils.replaceAll("aa", "a", "b")    = "bb";
@@ -505,10 +507,10 @@ export default class StringUtils {
   }
 
   /**
-   * Joins the elements of the provided array into a single String
-   * @param array  the array of values to join together, may be null
-   * @param separator the separator character to use, null treated as ""
-   * @returns the joined String
+   * 将提供的数组的元素连接成单个字符串
+   * @param array 要连接的值的数组，可以为null
+   * @param separator 要使用的分隔符，null视为""
+   * @returns 连接后的字符串
    * @example StringUtils.join([], *)    = "";
    * @example StringUtils.join(["a", "b", "c"], null)  = "abc"
    * @example StringUtils.join(["a", "b", "c"], "-")  = "a-b-c"
@@ -531,6 +533,9 @@ export default class StringUtils {
     return result;
   }
 
+  /**
+   * 转义正则表达式中的特殊字符
+   */
   private static escapeRegExp(str: string): string {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
   }

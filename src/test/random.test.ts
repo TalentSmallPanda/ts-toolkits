@@ -188,7 +188,45 @@ describe("RandomUtils", () => {
   describe("getUuid", () => {
     it("应生成有效的UUID", () => {
       const result = RandomUtils.getUuid();
-      expect(result).toMatch(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{0,4}-[0-9a-fA-F]{0,12}$/);
+      expect(result).toMatch(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/);
+    });
+
+    it("应生成符合 UUID v4 标准的 UUID", () => {
+      const result = RandomUtils.getUuid();
+      // 检查格式：8-4-4-4-12
+      const parts = result.split("-");
+      expect(parts.length).toBe(5);
+      expect(parts[0].length).toBe(8);
+      expect(parts[1].length).toBe(4);
+      expect(parts[2].length).toBe(4);
+      expect(parts[3].length).toBe(4);
+      expect(parts[4].length).toBe(12);
+
+      // 检查版本位 (版本4的UUID第13位是4)
+      const versionChar = result.charAt(14);
+      expect(parseInt(versionChar, 16) & 0x4).toBe(4);
+
+      // 检查变体位 (UUID变体位应为 10xx)
+      const variantByte = parseInt(result.charAt(19), 16);
+      expect(variantByte & 0x8).toBe(8); // 最高位为1
+      expect(variantByte & 0x4).toBe(0); // 次高位为0
+    });
+
+    it("应生成唯一的UUID", () => {
+      const uuids = new Set();
+      for (let i = 0; i < 100; i++) {
+        uuids.add(RandomUtils.getUuid());
+      }
+      // 确保生成了100个不同的UUID
+      expect(uuids.size).toBe(100);
+    });
+
+    it("应在多次调用中保持一致的格式", () => {
+      const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+      for (let i = 0; i < 10; i++) {
+        const result = RandomUtils.getUuid();
+        expect(result).toMatch(uuidRegex);
+      }
     });
   });
 });

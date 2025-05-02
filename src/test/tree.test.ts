@@ -4,7 +4,7 @@ import { ListToTreeOps, UpdateOperation } from "../utils/type";
 
 describe("TreeUtils", () => {
   describe("initTree", () => {
-    it("should initialize a tree structure correctly", () => {
+    it("应该正确初始化树结构", () => {
       const data = [
         { id: 1, children: [{ id: 11 }, { id: 12 }] },
         { id: 2, children: [{ id: 21 }] },
@@ -27,14 +27,14 @@ describe("TreeUtils", () => {
       expect(result[1].children[0]._uniKey).toBe("1-0");
       expect(result[1].children[0]._visible).toBe(IsVisible.Y);
 
-      //Check lastArray
+      //检查lastArray
       expect(result[0]._lastArray).toEqual([IsLast.F]);
       expect(result[1]._lastArray).toEqual([IsLast.T]);
       expect(result[0].children[0]._lastArray).toEqual([IsLast.F, IsLast.F]);
       expect(result[0].children[1]._lastArray).toEqual([IsLast.F, IsLast.T]);
       expect(result[1].children[0]._lastArray).toEqual([IsLast.T, IsLast.T]);
 
-      //Check idxs
+      //检查idxs
       expect(result[0]._idxs).toEqual([0]);
       expect(result[1]._idxs).toEqual([1]);
       expect(result[0].children[0]._idxs).toEqual([0, 0]);
@@ -42,12 +42,12 @@ describe("TreeUtils", () => {
       expect(result[1].children[0]._idxs).toEqual([1, 0]);
     });
 
-    it("should handle empty data correctly", () => {
+    it("应该正确处理空数据", () => {
       const result = TreeUtils.initTree([]);
       expect(result).toEqual([]);
     });
 
-    it("should handle data with no children correctly", () => {
+    it("应该正确处理没有子节点的数据", () => {
       const data = [{ id: 1 }, { id: 2 }];
       const result = TreeUtils.initTree(data);
       expect(result.length).toBe(2);
@@ -57,7 +57,7 @@ describe("TreeUtils", () => {
   });
 
   describe("initFlatTree", () => {
-    it("should initialize a flat tree structure correctly", () => {
+    it("应该正确初始化扁平树结构", () => {
       const data = [
         { id: 1, children: [{ id: 11 }, { id: 12 }] },
         { id: 2, children: [{ id: 21 }] },
@@ -83,31 +83,31 @@ describe("TreeUtils", () => {
       expect(result[3]._level).toBe(TreeLevel.One);
       expect(result[3]._expanded).toBe(true);
 
-      // Check _uniKey
+      // 检查 _uniKey
       expect(result[0]._uniKey).toBe("0");
       expect(result[1]._uniKey).toBe("0-0");
       expect(result[2]._uniKey).toBe("0-1");
       expect(result[3]._uniKey).toBe("1");
 
-      // Check _lastArray
+      // 检查 _lastArray
       expect(result[0]._lastArray).toEqual([IsLast.F]);
       expect(result[1]._lastArray).toEqual([IsLast.F, IsLast.F]);
       expect(result[2]._lastArray).toEqual([IsLast.F, IsLast.T]);
       expect(result[3]._lastArray).toEqual([IsLast.T]);
 
-      // Check _idxs
+      // 检查 _idxs
       expect(result[0]._idxs).toEqual([0]);
       expect(result[1]._idxs).toEqual([0, 0]);
       expect(result[2]._idxs).toEqual([0, 1]);
       expect(result[3]._idxs).toEqual([1]);
     });
 
-    it("should handle empty data correctly", () => {
+    it("应该正确处理空数据", () => {
       const result = TreeUtils.initFlatTree([]);
       expect(result).toEqual([]);
     });
 
-    it("should handle data with expandLevel correctly", () => {
+    it("应该正确处理带有expandLevel的数据", () => {
       const data = [
         { id: 1, children: [{ id: 11 }, { id: 12 }] },
         { id: 2, children: [{ id: 21 }] },
@@ -121,7 +121,7 @@ describe("TreeUtils", () => {
       expect(result[4]._visible).toBe(IsVisible.N);
     });
 
-    it("should handle data with expanded correctly", () => {
+    it("应该正确处理展开标志的数据", () => {
       const data = [
         { id: 1, children: [{ id: 11 }, { id: 12 }] },
         { id: 2, children: [{ id: 21 }] },
@@ -137,7 +137,7 @@ describe("TreeUtils", () => {
       expect(result[3]._visible).toBe(IsVisible.Y);
     });
 
-    it("should handle data with no children correctly", () => {
+    it("应该正确处理没有子节点的数据", () => {
       const data = [{ id: 1 }, { id: 2 }];
       const result = TreeUtils.initFlatTree(data);
       expect(result.length).toBe(2);
@@ -147,7 +147,7 @@ describe("TreeUtils", () => {
   });
 
   describe("createTree", () => {
-    it("should create a tree structure correctly", () => {
+    it("应该正确创建树结构", () => {
       const result = TreeUtils.createTree(["id"], 2, 2);
       expect(result.length).toBe(2);
       expect(result[0].id).toBe("id_0");
@@ -158,14 +158,14 @@ describe("TreeUtils", () => {
       expect(result[1].children[0].id).toBe("id_1_0");
     });
 
-    it("should handle maxLevel correctly", () => {
+    it("应该正确处理最大层级", () => {
       const result = TreeUtils.createTree(["id"], 1, 2);
       expect(result.length).toBe(2);
       expect(result[0].children[0].id).toBe("id_0_0");
       expect(result[1].children[0].id).toBe("id_1_0");
     });
 
-    it("should handle empty fields correctly", () => {
+    it("应该正确处理空字段", () => {
       const result = TreeUtils.createTree(
         [
           "id",
@@ -199,7 +199,7 @@ describe("TreeUtils", () => {
       },
       { id: "2", _expanded: false, children: [{ id: "21", _expanded: false }] },
     ];
-    it("should expand the tree correctly for specific ids", () => {
+    it("应该针对特定ID正确展开树", () => {
       const data = TreeUtils.initTree(baseData);
       const expands = ["1"];
       const result = TreeUtils.expandTree(data, expands, undefined, "id");
@@ -207,7 +207,7 @@ describe("TreeUtils", () => {
       expect(result[0].children[0]._expanded).toBe(false);
       expect(result[1]._expanded).toBe(false);
     });
-    it("should handle empty expands array correctly", () => {
+    it("应该正确处理空的展开数组", () => {
       const data = TreeUtils.initTree(baseData);
       const expands: string[] = [];
       const result = TreeUtils.expandTree(data, expands, "id");
@@ -216,16 +216,16 @@ describe("TreeUtils", () => {
       expect(result[1]._expanded).toBe(false);
     });
 
-    it("should expand tree based on depth when expands is a number", () => {
+    it("当expands是数字时应该根据深度展开树", () => {
       const data = TreeUtils.initTree(baseData);
-      const expands = 1; // Expand first level only
+      const expands = 1; // 仅展开第一级
       const result = TreeUtils.expandTree(data, expands);
       expect(result[0]._expanded).toBe(true);
       expect(result[0].children[0]._expanded).toBe(true);
       expect(result[1]._expanded).toBe(true);
     });
 
-    it("should not expand any items if given depth is 0", () => {
+    it("如果给定深度为0则不应展开任何项", () => {
       const data = TreeUtils.initTree(baseData);
       const expands = 0;
       const result = TreeUtils.expandTree(data, expands);
@@ -237,7 +237,7 @@ describe("TreeUtils", () => {
   });
 
   describe("handleListToTree", () => {
-    it("should convert a list to a tree correctly", () => {
+    it("应该正确将列表转换为树", () => {
       const list = [
         { id: "01", name: "张大大", pid: "", job: "项目经理" },
         { id: "02", name: "小亮", pid: "01", job: "产品leader" },
@@ -267,7 +267,7 @@ describe("TreeUtils", () => {
       expect(result[0].id).toBe("01");
       expect(result[0].children.length).toBe(5);
     });
-    it("should handle maxLevel correctly", () => {
+    it("应该正确处理最大层级", () => {
       const list = [
         { id: "01", name: "张大大", pid: "", job: "项目经理" },
         { id: "02", name: "小亮", pid: "01", job: "产品leader" },
@@ -298,7 +298,7 @@ describe("TreeUtils", () => {
       expect(result[0].id).toBe("01");
       expect(result[0].children?.length).toBe(0);
     });
-    it("should handle maxLevel < 0", () => {
+    it("应该处理maxLevel < 0的情况", () => {
       const list = [{ id: "01", name: "张大大", pid: "", job: "项目经理" }];
       const ops: ListToTreeOps<{ id: string; pid: string }> = {
         keyField: "id",
@@ -311,7 +311,7 @@ describe("TreeUtils", () => {
   });
 
   describe("getTreeItemByIdxs", () => {
-    it("should get a tree item by its idxs correctly", () => {
+    it("应该通过idxs正确获取树项", () => {
       const data = [
         { id: 1, children: [{ id: 11, children: [{ id: 111 }] }, { id: 12 }] },
         { id: 2, children: [{ id: 21 }] },
@@ -328,19 +328,19 @@ describe("TreeUtils", () => {
   });
 
   describe("updateTreeItemByIdxs", () => {
-    it("should update a tree item by its idxs correctly", () => {
+    it("应该通过idxs正确更新树项", () => {
       const data = [
         { id: 1, children: [{ id: 11 }, { id: 12 }] },
         { id: 2, children: [{ id: 21 }] },
       ];
       const updatedData = TreeUtils.updateTreeItemByIdxs(TreeUtils.initTree(data), [0, 0], "id", 111);
       expect(updatedData[0].children[0].id).toBe(111);
-      expect(updatedData).not.toBe(data); // Ensure a new array is returned
+      expect(updatedData).not.toBe(data); // 确保返回新数组
     });
   });
 
   describe("updateTreeItemsByIdxs", () => {
-    it("should update multiple tree items correctly", () => {
+    it("应该正确更新多个树项", () => {
       const data = [
         { id: 1, children: [{ id: 11 }, { id: 12 }] },
         { id: 2, children: [{ id: 21 }] },
@@ -357,7 +357,7 @@ describe("TreeUtils", () => {
   });
 
   describe("deleteTreeItemByIdxs", () => {
-    it("should delete a tree item by its idxs correctly", () => {
+    it("应该通过idxs正确删除树项", () => {
       const data = [
         { id: 1, children: [{ id: 11 }, { id: 12 }] },
         { id: 2, children: [{ id: 21 }] },
@@ -370,7 +370,7 @@ describe("TreeUtils", () => {
   });
 
   describe("deleteTreeItemsByIdxs", () => {
-    it("should delete multiple tree items correctly", () => {
+    it("应该正确删除多个树项", () => {
       const data = [
         { id: 1, children: [{ id: 11 }, { id: 12 }] },
         { id: 2, children: [{ id: 21 }] },

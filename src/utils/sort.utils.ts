@@ -1,7 +1,7 @@
 import { ArrayUtils, SortOrder } from "..";
 import { ComparatorThan, Compare, MergeSortOps, SortKey } from "./type";
 
-export default class QueryUtils {
+export default class SortUtils {
   /**
    * 对数组进行归并排序
    * @template T - 数组元素类型
@@ -107,14 +107,17 @@ export default class QueryUtils {
       const skipIf = typeof sortKey === "object" ? sortKey.skipIf : undefined;
       const transform = typeof sortKey === "object" ? sortKey.transform : undefined;
       const compare = typeof sortKey === "object" ? sortKey.compare : undefined;
-      const rawValueA = a[key];
-      const rawValueB = b[key];
+
+      // 使用可选链提高健壮性
+      const rawValueA = a?.[key];
+      const rawValueB = b?.[key];
 
       // 应用 skipIf
       if (skipIf && (skipIf(rawValueA) || skipIf(rawValueB))) {
         continue;
       }
 
+      // 优先使用自定义比较函数
       if (compare) {
         const result = compare(rawValueA, rawValueB);
         if (result !== ComparatorThan.Equal) {
@@ -144,11 +147,12 @@ export default class QueryUtils {
    * @returns 合并后的排序数组
    */
   private static merge<T>(leftArray: T[], rightArray: T[], compareFn: Compare<T>): T[] {
-    const result = new Array(leftArray.length + rightArray.length);
+    const result = new Array<T>(leftArray.length + rightArray.length);
     let leftIndex = 0;
     let rightIndex = 0;
     let resultIndex = 0;
 
+    // 合并两个有序数组: ComparatorThan.Equal = 0, LessThan = -1, GreaterThan = 1
     while (leftIndex < leftArray.length && rightIndex < rightArray.length) {
       if (compareFn(leftArray[leftIndex], rightArray[rightIndex]) <= ComparatorThan.Equal) {
         result[resultIndex++] = leftArray[leftIndex++];
@@ -157,6 +161,7 @@ export default class QueryUtils {
       }
     }
 
+    // 处理剩余元素
     while (leftIndex < leftArray.length) {
       result[resultIndex++] = leftArray[leftIndex++];
     }

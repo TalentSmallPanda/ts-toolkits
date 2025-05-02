@@ -1,13 +1,13 @@
 import ObjectUtils from "./object.utils";
 
-// isInteger and isSafeInteger cannot be found in IE
+// IE中找不到isInteger和isSafeInteger方法
 export default class NumberUtils {
   public static readonly MAX_SAFE_INTEGER: number = 9007199254740991;
   public static readonly MIN_SAFE_INTEGER: number = -9007199254740991;
 
   /**
-   * check whether current value is integer
-   * @param value
+   * 检查当前值是否为整数
+   * @param value 要检查的值
    * @example Number.isInteger(0);         // true
    * @example Number.isInteger(1);         // true
    * @example Number.isInteger(-100000);   // true
@@ -27,8 +27,8 @@ export default class NumberUtils {
   }
 
   /**
-   * check whether current value is safe integer
-   * @param value
+   * 检查当前值是否为安全整数
+   * @param value 要检查的值
    * @example Number.isSafeInteger(3);                    // true
    * @example Number.isSafeInteger(Math.pow(2, 53));      // false
    * @example Number.isSafeInteger(Math.pow(2, 53) - 1);  // true
@@ -43,10 +43,10 @@ export default class NumberUtils {
   }
 
   /**
-   * Returns a string representing a number in fixed-point notation.
-   * @param value target value.
-   * @param fractionDigits Number of digits after the decimal point. Must be in the range 0 -100, inclusive.
-   * @param defaultValue default value if value is empty.
+   * 返回一个表示指定数字的固定小数点表示法的字符串
+   * @param value 目标值
+   * @param fractionDigits 小数点后的位数。必须在0-100范围内（包含）
+   * @param defaultValue 如果值为空时的默认值
    */
   public static toFixed(value: number | null | undefined, fractionDigits: number, defaultValue?: string): string {
     if (ObjectUtils.isNullOrUndefined(value)) {

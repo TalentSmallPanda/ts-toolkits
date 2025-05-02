@@ -4,10 +4,10 @@ import { EmptyArray, NotEmptyArray } from "./type";
 
 export default class ArrayUtils {
   /**
-   * check whether current array is empty or null/undefined.
+   * 检查当前数组是否为空或 null/undefined。
    * @param array
-   * @returns  true if array is empty or null/undefined; otherwise, false.
-   * @throws if input parameter is not array type or null/undefined
+   * @returns 如果数组为空或 null/undefined，则返回 true；否则，返回 false。
+   * @throws 如果输入参数不是数组类型、null 或 undefined
    * @example ArrayUtils.isEmpty([]) = true;
    * @example ArrayUtils.isEmpty(null) = true;
    * @example ArrayUtils.isEmpty(undefined) = true;
@@ -20,10 +20,10 @@ export default class ArrayUtils {
   }
 
   /**
-   * check whether current array is not empty or null/undefined.
+   * 检查当前数组是否非空且不是 null/undefined。
    * @param array
-   * @returns  false if array is empty or null/undefined; otherwise, true.
-   * @throws if input parameter is not array type or null/undefined
+   * @returns 如果数组为空或 null/undefined，则返回 false；否则，返回 true。
+   * @throws 如果输入参数不是数组类型、null 或 undefined
    * @example ArrayUtils.isNotEmpty([]) = false;
    * @example ArrayUtils.isNotEmpty(null) = false;
    * @example ArrayUtils.isNotEmpty(undefined) = false;
@@ -36,10 +36,10 @@ export default class ArrayUtils {
   }
 
   /**
-   * Determines whether an element is in the array.
+   * 判断数组中是否包含指定元素。
    * @param array
    * @param item
-   * @returns true if item is in the array; otherwise, false.
+   * @returns 如果数组中包含该元素，则返回 true；否则，返回 false。
    * @example ArrayUtils.contains(null, 1) = false
    * @example ArrayUtils.contains(undefined, 1) = false
    * @example ArrayUtils.contains([], 1) = false
@@ -56,10 +56,10 @@ export default class ArrayUtils {
   }
 
   /**
-   * Determines whether any of candidates is in the array.
+   * 判断数组中是否包含候选项中的任意一个元素。
    * @param array
    * @param candidates
-   * @returns true if item is in the array; otherwise, false.
+   * @returns 如果数组中包含候选项中的任意一个元素，则返回 true；否则，返回 false。
    * @example ArrayUtils.containsAny(null, [1, 2]) = false
    * @example ArrayUtils.containsAny(undefined, [1, 2]) = false
    * @example ArrayUtils.containsAny([1, 3, 5], [1, 2]) = true
@@ -82,13 +82,13 @@ export default class ArrayUtils {
   }
 
   /**
-   * Inserts an element into the array at the specified index.
+   * 在数组的指定索引处插入元素。
    * @param array
-   * @param index The zero-based index at which item should be inserted.
-   * @param item The object to insert. The value can be null for reference types.
-   * @returns true if insert successfully, otherwise false.
+   * @param index 应该插入元素的从零开始的索引。
+   * @param item 要插入的对象。对于引用类型，该值可以为空。
+   * @returns 如果插入成功则返回 true，否则返回 false。
    * @example ArrayUtils.insert([1, 3], 1, 2) ==> [1, 2, 3]
-   * @example ArrayUtils.insert([1, 2], 100, 4) = false // greater than array.length.
+   * @example ArrayUtils.insert([1, 2], 100, 4) = false // 大于数组长度。
    */
   public static insert<T>(array: T[], index: number, item: T): boolean {
     if (!ObjectUtils.isArray(array) || !NumberUtils.isSafeInteger(index) || index > array.length) {
@@ -100,10 +100,10 @@ export default class ArrayUtils {
   }
 
   /**
-   * Removes the first occurrence of a specific object from the array.
+   * 从数组中移除特定对象的第一个匹配项。
    * @param array
    * @param item
-   * @returns true if item is successfully removed; otherwise, false.
+   * @returns 如果成功移除项，则返回 true；否则，返回 false。
    * @example  ArrayUtils.remove([1, 2, 3], 2) = true
    * @example  ArrayUtils.remove([1, 2, 3], 5) = false
    */
@@ -120,9 +120,9 @@ export default class ArrayUtils {
   }
 
   /**
-   * Find the max number value from array.
+   * 查找数组中的最大数值。
    * @param array
-   * @returns the max value of the number array.
+   * @returns 数字数组的最大值。
    * @example  ArrayUtils.max([1,5,3,2,4]) = 5
    */
   public static max(array: number[]): number {
@@ -130,15 +130,28 @@ export default class ArrayUtils {
   }
 
   /**
-   * Find the min number value from array.
+   * 查找数组中的最小数值。
    * @param array
-   * @returns the max value of the number array.
+   * @returns 数字数组的最小值。
    * @example  ArrayUtils.min([1,5,3,2,4]) = 1
    */
   public static min(array: number[]): number {
     return Math.min.apply(null, array);
   }
 
+  /**
+   * 从数组的开头获取 n 个元素。
+   * @param array
+   * @param n 要获取的元素数量，默认为1
+   * @returns 数组的切片。
+   * @example  ArrayUtils.take([1, 2, 3, 4, 5]) = [1]
+   * @example  ArrayUtils.take([1, 2, 3, 4, 5], null) = [1]
+   * @example  ArrayUtils.take([1, 2, 3, 4, 5], NaN) = [1]
+   * @example  ArrayUtils.take([1, 2, 3, 4, 5], 3) = [1, 2, 3]
+   * @example  ArrayUtils.take([1, 2, 3, 4, 5], 0) = []
+   * @example  ArrayUtils.take([1, 2, 3, 4, 5], -2) = []
+   * @example  ArrayUtils.take([1, 2, 3, 4, 5], 10) = [1, 2, 3, 4, 5]
+   */
   public static take<T>(array: T[], n?: number | undefined | null): T[] {
     const length = array.length;
     let takeN;
@@ -155,9 +168,9 @@ export default class ArrayUtils {
   }
 
   /**
-   * Creates a slice of array with n items taken from the end.
+   * 从数组的末尾创建包含 n 个元素的切片。
    * @param array
-   * @returns Array - The slice of the array.
+   * @returns 数组的切片。
    * @example  ArrayUtils.takeRight([1, 2, 3, 4, 5]) = [5]
    * @example  ArrayUtils.takeRight([1, 2, 3, 4, 5], null) = [5]
    * @example  ArrayUtils.takeRight([1, 2, 3, 4, 5], NaN) = [5]

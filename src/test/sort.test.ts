@@ -9,12 +9,6 @@ interface TestItem {
   children?: TestItem[];
 }
 
-interface TestDataItem {
-  id: number;
-  category: string;
-  value: number;
-}
-
 describe("SortUtils", () => {
   const testData: TestItem[] = [
     { id: 1, name: "Alice", age: 30, children: [{ id: 11, name: "Child1", age: 5 }] },

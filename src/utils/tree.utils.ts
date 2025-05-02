@@ -3,17 +3,12 @@ import { BaseTreeData, BaseTreeItem, FieldItem, ListToTreeOps, MergeFields, Tree
 
 export default class TreeUtils {
   /**
-   * 初始化树形结构
-   *
-   * 此方法用于将给定的列表转换为树形结构它接受一个列表、展开级别、是否具有唯一键和子字段名称作为参数
-   * 展开级别的默认值为 -1，表示全部展开如果树节点需要基于唯一键进行标识，则可以设置 hasUniKey 为 true
-   * 子字段名称可以根据需要进行更改，默认为 'children'
-   *
-   * @param list - 需要转换为树形结构的列表
-   * @param expandLevel - 树的展开级别，默认为 -1，表示全部不展开
-   * @param hasUniKey - 树节点是否具有唯一键，默认为 false
-   * @param childField - 子节点的字段名称，默认为 'children'
-   * @returns 返回转换后的树形结构数组
+   * 初始化树结构
+   * @param list 源数据列表
+   * @param expandLevel 默认展开层级，-1表示全部展开
+   * @param hasUniKey 是否生成唯一键
+   * @param childField 子节点字段名
+   * @returns 初始化后的树结构数据
    */
   public static initTree<T>(
     list: T[],
@@ -25,17 +20,12 @@ export default class TreeUtils {
   }
 
   /**
-   * 初始化扁平树结构
-   *
-   * 此方法用于将一个扁平的列表转换成树形结构它可以应用于各种类型的对象列表，
-   * 只要这些对象包含适当的属性来表示层级关系通过传入不同的参数，可以控制树形结构的
-   * 展开级别、是否存在唯一键以及子节点的字段名称
-   *
-   * @param list 扁平列表，包含一系列对象，这些对象应包含指定的属性来表示父-child关系
-   * @param expandLevel 展开树形结构的级别默认为-1，表示全部不展开
-   * @param hasUniKey 指示对象中是否包含唯一的标识符如果为true，每个对象都应有一个唯一的键值
-   * @param childField 对象中表示子节点的属性名默认为'children'，即每个对象都应有这个属性来存储其子节点
-   * @returns 返回一个树形结构的数组，每个元素都是一个带有层级关系的节点
+   * 初始化扁平化树结构
+   * @param list 源数据列表
+   * @param expandLevel 默认展开层级，-1表示全部展开
+   * @param hasUniKey 是否生成唯一键
+   * @param childField 子节点字段名
+   * @returns 初始化后的扁平化树结构数据
    */
   public static initFlatTree<T>(
     list: T[],
@@ -46,6 +36,20 @@ export default class TreeUtils {
     return this.init(list, expandLevel, hasUniKey, childField, true);
   }
 
+  /**
+   * 初始化树结构的内部实现方法
+   * @param list 源数据列表
+   * @param expandLevel 默认展开层级，-1表示全部展开
+   * @param hasUniKey 是否生成唯一键
+   * @param childField 子节点字段名
+   * @param isFlat 是否扁平化
+   * @param array 结果数组
+   * @param depth 当前深度
+   * @param idxs 索引数组
+   * @param lastArray 节点是否为最后一个的标记数组
+   * @param visible 节点是否可见
+   * @returns 初始化后的树结构数据
+   */
   public static init<T>(
     list: T[],
     expandLevel = -1,
@@ -99,13 +103,13 @@ export default class TreeUtils {
   }
 
   /**
-   *  @description:  createTree  create a tree structure data with the given fields and the given number of nodes on each level
-   *  @param fields:  the array of fields to be created for each node
-   *  @param maxLevel:  the max level of the tree structure data
-   *  @param num:  the number of nodes on each level
-   *  @param depth:  the current level of the tree structure data
-   *  @param idxs:  the array of indexs of the parent node
-   *  @return:  the tree structure data
+   * 创建具有给定字段和每个层级指定节点数的树结构数据
+   * @param fields 为每个节点创建的字段数组
+   * @param maxLevel 树结构数据的最大层级
+   * @param num 每个层级上的节点数量
+   * @param depth 树结构数据的当前层级
+   * @param idxs 父节点的索引数组
+   * @return 生成的树结构数据
    */
   public static createTree<T extends [FieldItem, ...FieldItem[]]>(
     fields = ["id"] as unknown as T,
@@ -163,11 +167,12 @@ export default class TreeUtils {
   }
 
   /**
-   *  @description:  expandTree  traverse the tree structure data and set the expanded status according to the given expands array
-   *  @param list:  the tree structure data
-   *  @param expands:  the array of keys to be expanded
-   *  @param key:  the key of the node in the tree structure data that is used to determine whether the node is expanded or not
-   *  @return:  the tree structure data with the expanded status set
+   * 遍历树结构数据并根据给定的展开数组设置展开状态
+   * @param list 树结构数据
+   * @param expands 要展开的键数组或最大展开层级数字
+   * @param expandField 用于存储展开状态的字段名
+   * @param key 用于确定节点是否展开的树结构数据中节点的键
+   * @return 设置了展开状态的树结构数据
    */
   public static expandTree<T = any>(
     list: T[],
@@ -199,11 +204,11 @@ export default class TreeUtils {
   }
 
   /**
-   * @param {T[]} list  The list of data to be converted to tree data
-   * @param {string | undefined | null | number} parentKey  The parent key of the tree data
-   * @param {ListToTreeOps<T>} [ops]  The options for converting list to tree data
-   * @param {number} [depth=0]  The depth of the tree data
-   * @returns {BaseTreeData[]}  The converted tree data
+   * 将列表转换为树结构
+   * @param list 待转换的列表数据
+   * @param parentKey 父节点的键值
+   * @param ops 转换操作的配置选项
+   * @returns 转换后的树结构数据
    */
   public static handleListToTree<T>(
     list: T[],
@@ -239,6 +244,13 @@ export default class TreeUtils {
     return array;
   }
 
+  /**
+   * 处理列表深度，限制树的最大层级
+   * @param list 树结构数据
+   * @param maxLevel 最大层级
+   * @param depth 当前深度
+   * @returns 处理后的树结构数据
+   */
   private static handleListDepth<T>(list: BaseTreeData<T>[], maxLevel: number, depth: number): BaseTreeData<T>[] {
     for (const item of list) {
       item.children = depth < maxLevel ? this.handleListDepth(item.children, maxLevel, depth + 1) : [];
@@ -247,18 +259,12 @@ export default class TreeUtils {
   }
 
   /**
-   * Get a tree item by its ids.
-   * @param data The tree data.
-   * @param idxs The ids of the item.
-   * @returns The item if found, null otherwise.
+   * 根据索引数组获取树中的特定项
+   * @param data 树数据
+   * @param idxs 索引数组
+   * @returns 找到的树节点，如果未找到则返回null
    */
   public static getTreeItemByIdxs<T>(data: T[], idxs: number[]): T | null {
-    /**
-     * Get an item from the list by its index.
-     * @param list The list of items.
-     * @param depth The current depth.
-     * @returns The item if found, null otherwise.
-     */
     const getItem = (list: T[], depth = 0): T | null => {
       if (ArrayUtils.isEmpty(list) || depth > idxs.length) {
         return null;
@@ -280,12 +286,12 @@ export default class TreeUtils {
   }
 
   /**
-   * Update a tree item by its ids.
-   * @param data The tree data.
-   * @param idxs The ids of the item.
-   * @param field The field to update.
-   * @param value The new value.
-   * @returns The updated data.
+   * 根据索引数组更新树中特定项的字段值
+   * @param data 树数据
+   * @param idxs 索引数组
+   * @param field 要更新的字段
+   * @param value 新的字段值
+   * @returns 更新后的树数据
    */
   public static updateTreeItemByIdxs<T extends BaseTreeItem>(
     data: T[],
@@ -302,10 +308,10 @@ export default class TreeUtils {
   }
 
   /**
-   * Updates multiple tree items in the tree data using the specified indices lists.
-   * @param data The tree data.
-   * @param updates An array of update operations.
-   * @returns The updated tree data after the updates.
+   * 根据多个更新操作批量更新树中的多个项
+   * @param data 树数据
+   * @param updates 更新操作数组
+   * @returns 更新后的树数据
    */
   public static updateTreeItemsByIdxs<T extends BaseTreeItem>(data: T[], updates: UpdateOperation<T>[]): T[] {
     const list = data.filter((o) => o._level === TreeLevel.One);
@@ -319,10 +325,10 @@ export default class TreeUtils {
   }
 
   /**
-   * Deletes a tree item from the tree data using the specified indices list.
-   * @param data The tree data.
-   * @param idxs The indices of the tree item to delete.
-   * @returns The updated tree data after deletion of specified item.
+   * 根据索引数组删除树中的特定项
+   * @param data 树数据
+   * @param idxs 索引数组
+   * @returns 删除后的树数据
    */
   public static deleteTreeItemByIdxs<T extends BaseTreeItem>(data: T[], idxs: number[]): T[] {
     const list = data.filter((o) => o._level === TreeLevel.One);
@@ -334,10 +340,10 @@ export default class TreeUtils {
   }
 
   /**
-   * Deletes multiple tree items from the tree data using the specified indices list.
-   * @param data The tree data.
-   * @param idxsList A list of indices arrays, each representing the path to a tree item to delete.
-   * @returns The updated tree data after deletion of specified items.
+   * 根据多个索引数组批量删除树中的多个项
+   * @param data 树数据
+   * @param idxsList 索引数组的数组
+   * @returns 删除后的树数据
    */
   public static deleteTreeItemsByIdxs<T extends BaseTreeItem>(data: T[], idxsList: number[][]): T[] {
     let newData = data.slice();

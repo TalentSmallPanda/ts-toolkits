@@ -4,7 +4,7 @@ export default class DateUtils {
   private static timeFormatRegex = /yyyy|yy|MM|M|dd|d|HH|H|mm|m|ss|s|SSS|S/g;
 
   /**
-   * Returns the number of milliseconds that have elapsed since 1970-01-01T00:00:00.000Z.
+   * 返回自 1970-01-01T00:00:00.000Z 以来已经过去的毫秒数。
    * @param date
    * @example DateUtils.dateToTimestamp(null) = 0
    * @example DateUtils.dateToTimestamp(undefined) = 0
@@ -18,7 +18,7 @@ export default class DateUtils {
   }
 
   /**
-   * Get date from the number of milliseconds that have elapsed since 1970-01-01T00:00:00.000Z.
+   * 从自 1970-01-01T00:00:00.000Z 以来已经过去的毫秒数获取日期。
    * @param timestamp
    * @example DateUtils.timestampToDate(1529366400) = new Date("Tue, 19 Jun 2018 00:00:00 GMT")
    */
@@ -27,7 +27,7 @@ export default class DateUtils {
   }
 
   /**
-   * Get currnet date without hours, minutes and seconds.
+   * 获取当前日期，不包含小时、分钟和秒。
    */
   public static getToday(): Date {
     const now = new Date();
@@ -36,61 +36,59 @@ export default class DateUtils {
   }
 
   /**
-   * Converts the value of the current date to its equivalent string representation
-   * using the specified format.
+   * 使用指定格式将当前日期的值转换为其等效的字符串表示形式。
    * @param date
    * @param format
-   * "yyyy" Year represented by four digits.
-   * "yy" Year as last two digits; leading zero for years less than 10.
-   * "MM" Month as digits; leading zero for single-digit months.
-   * "M" Month as digits; no leading zero for single-digit months.
-   * "dd" Day of the month as digits; leading zero for single-digit days.
-   * "d" Day of the month as digits; no leading zero for single-digit days.
-   * "HH" Hours; leading zero for single-digit hours (24-hour clock).
-   * "H" Hours; no leading zero for single-digit hours (24-hour clock).
-   * "mm" Minutes; leading zero for single-digit minutes.
-   * "m" Minutes; no leading zero for single-digit minutes.
-   * "ss" Seconds; leading zero for single-digit seconds.
-   * "s" Seconds; no leading zero for single-digit seconds.
-   * "SSS" Milliseconds; leading zero for single-digit seconds.
-   * "S" Milliseconds; no leading zero for single-digit seconds.
+   * "yyyy" 以四位数字表示的年份。
+   * "yy" 年份的后两位数字；小于10的年份前导零。
+   * "MM" 以数字表示的月份；单数字月份前导零。
+   * "M" 以数字表示的月份；单数字月份无前导零。
+   * "dd" 以数字表示的月份中的日期；单数字日期前导零。
+   * "d" 以数字表示的月份中的日期；单数字日期无前导零。
+   * "HH" 小时；单数字小时前导零（24小时制）。
+   * "H" 小时；单数字小时无前导零（24小时制）。
+   * "mm" 分钟；单数字分钟前导零。
+   * "m" 分钟；单数字分钟无前导零。
+   * "ss" 秒；单数字秒前导零。
+   * "s" 秒；单数字秒无前导零。
+   * "SSS" 毫秒；单数字毫秒前导零。
+   * "S" 毫秒；单数字毫秒无前导零。
    */
   public static toString(date: Date, format: string): string {
     return format.replace(this.timeFormatRegex, (matched) => this.getTimeFormat(false, date, matched));
   }
 
   /**
-   * Converts the value of the current UTC date to its equivalent string representation
-   * using the specified format.
+   * 使用指定格式将当前UTC日期的值转换为其等效的字符串表示形式。
    * @param date
    * @param format
-   * "yyyy" Year represented by four digits.
-   * "yy" Year as last two digits; leading zero for years less than 10.
-   * "MM" Month as digits; leading zero for single-digit months.
-   * "M" Month as digits; no leading zero for single-digit months.
-   * "dd" Day of the month as digits; leading zero for single-digit days.
-   * "d" Day of the month as digits; no leading zero for single-digit days.
-   * "HH" Hours; leading zero for single-digit hours (24-hour clock).
-   * "H" Hours; no leading zero for single-digit hours (24-hour clock).
-   * "mm" Minutes; leading zero for single-digit minutes.
-   * "m" Minutes; no leading zero for single-digit minutes.
-   * "ss" Seconds; leading zero for single-digit seconds.
-   * "s" Seconds; no leading zero for single-digit seconds.
-   * "SSS" Milliseconds; leading zero for single-digit seconds.
-   * "S" Milliseconds; no leading zero for single-digit seconds.
+   * "yyyy" 以四位数字表示的年份。
+   * "yy" 年份的后两位数字；小于10的年份前导零。
+   * "MM" 以数字表示的月份；单数字月份前导零。
+   * "M" 以数字表示的月份；单数字月份无前导零。
+   * "dd" 以数字表示的月份中的日期；单数字日期前导零。
+   * "d" 以数字表示的月份中的日期；单数字日期无前导零。
+   * "HH" 小时；单数字小时前导零（24小时制）。
+   * "H" 小时；单数字小时无前导零（24小时制）。
+   * "mm" 分钟；单数字分钟前导零。
+   * "m" 分钟；单数字分钟无前导零。
+   * "ss" 秒；单数字秒前导零。
+   * "s" 秒；单数字秒无前导零。
+   * "SSS" 毫秒；单数字毫秒前导零。
+   * "S" 毫秒；单数字毫秒无前导零。
    */
   public static toUTCString(date: Date, format: string): string {
     return format.replace(this.timeFormatRegex, (matched) => this.getTimeFormat(true, date, matched));
   }
 
   /**
-   *  Compares two date and returns a value indicating whether one is less than, equal to, or greater than the other.
+   * 比较两个日期并返回一个值，指示一个是小于、等于还是大于另一个。
    * @param date1
    * @param date2
    * @returns
-   * - If less than 0, date1 is less than date2.
-   * - If 0, date1 equals date2.
-   * - If greater than 0, date1 is greater than date2.
+   * - 如果小于0，则date1小于date2。
+   * - 如果为0，则date1等于date2。
+   * - 如果大于0，则date1大于date2。
    */
   public static compare(date1: Date, date2: Date): number {
     const date1Time = date1.getTime();
@@ -105,6 +103,13 @@ export default class DateUtils {
     }
   }
 
+  /**
+   * 根据格式键获取时间格式字符串
+   * @param isUTC 是否使用UTC时间
+   * @param date 日期对象
+   * @param formatKey 格式键
+   * @returns 格式化后的时间字符串
+   */
   private static getTimeFormat(isUTC: boolean, date: Date, formatKey: string): string {
     switch (formatKey) {
       case "yyyy":

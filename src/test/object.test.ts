@@ -2,49 +2,49 @@ import ObjectUtils from "../utils/object.utils";
 
 describe("ObjectUtils", () => {
   describe("isNull", () => {
-    test("should return true for null", () => {
+    test("对null应该返回true", () => {
       expect(ObjectUtils.isNull(null)).toBe(true);
     });
-    test("should return false for undefined", () => {
+    test("对undefined应该返回false", () => {
       expect(ObjectUtils.isNull(undefined)).toBe(false);
     });
-    test("should return false for non-null values", () => {
+    test("对非null值应该返回false", () => {
       expect(ObjectUtils.isNull({})).toBe(false);
       expect(ObjectUtils.isNull(1)).toBe(false);
     });
   });
 
   describe("isUndefinend", () => {
-    test("should return true for undefined", () => {
+    test("对undefined应该返回true", () => {
       expect(ObjectUtils.isUndefinend(undefined)).toBe(true);
     });
-    test("should return false for null", () => {
+    test("对null应该返回false", () => {
       expect(ObjectUtils.isUndefinend(null)).toBe(false);
     });
-    test("should return false for non-undefined values", () => {
+    test("对非undefined值应该返回false", () => {
       expect(ObjectUtils.isUndefinend({})).toBe(false);
       expect(ObjectUtils.isUndefinend(1)).toBe(false);
     });
   });
 
   describe("isNullOrUndefined", () => {
-    test("should return true for null", () => {
+    test("对null应该返回true", () => {
       expect(ObjectUtils.isNullOrUndefined(null)).toBe(true);
     });
-    test("should return true for undefined", () => {
+    test("对undefined应该返回true", () => {
       expect(ObjectUtils.isNullOrUndefined(undefined)).toBe(true);
     });
-    test("should return false for other values", () => {
+    test("对其他值应该返回false", () => {
       expect(ObjectUtils.isNullOrUndefined({})).toBe(false);
       expect(ObjectUtils.isNullOrUndefined(1)).toBe(false);
     });
   });
 
   describe("isArray", () => {
-    test("should return true for arrays", () => {
+    test("对数组应该返回true", () => {
       expect(ObjectUtils.isArray([])).toBe(true);
     });
-    test("should return false for non-arrays", () => {
+    test("对非数组应该返回false", () => {
       expect(ObjectUtils.isArray(null)).toBe(false);
       expect(ObjectUtils.isArray(undefined)).toBe(false);
       expect(ObjectUtils.isArray(1)).toBe(false);
@@ -52,10 +52,10 @@ describe("ObjectUtils", () => {
   });
 
   describe("isDate", () => {
-    test("should return true for Date objects", () => {
+    test("对Date对象应该返回true", () => {
       expect(ObjectUtils.isDate(new Date())).toBe(true);
     });
-    test("should return false for non-Date values", () => {
+    test("对非Date值应该返回false", () => {
       expect(ObjectUtils.isDate(null)).toBe(false);
       expect(ObjectUtils.isDate(undefined)).toBe(false);
       expect(ObjectUtils.isDate(1)).toBe(false);
@@ -63,10 +63,10 @@ describe("ObjectUtils", () => {
   });
 
   describe("isString", () => {
-    test("should return true for strings", () => {
+    test("对字符串应该返回true", () => {
       expect(ObjectUtils.isString("test")).toBe(true);
     });
-    test("should return false for non-strings", () => {
+    test("对非字符串应该返回false", () => {
       expect(ObjectUtils.isString(null)).toBe(false);
       expect(ObjectUtils.isString(undefined)).toBe(false);
       expect(ObjectUtils.isString(1)).toBe(false);
@@ -74,10 +74,10 @@ describe("ObjectUtils", () => {
   });
 
   describe("isNumber", () => {
-    test("should return true for numbers", () => {
+    test("对数字应该返回true", () => {
       expect(ObjectUtils.isNumber(1)).toBe(true);
     });
-    test("should return false for non-numbers", () => {
+    test("对非数字应该返回false", () => {
       expect(ObjectUtils.isNumber(null)).toBe(false);
       expect(ObjectUtils.isNumber(undefined)).toBe(false);
       expect(ObjectUtils.isNumber("test")).toBe(false);
@@ -85,10 +85,10 @@ describe("ObjectUtils", () => {
   });
 
   describe("isBoolean", () => {
-    test("should return true for booleans", () => {
+    test("对布尔值应该返回true", () => {
       expect(ObjectUtils.isBoolean(false)).toBe(true);
     });
-    test("should return false for non-booleans", () => {
+    test("对非布尔值应该返回false", () => {
       expect(ObjectUtils.isBoolean(null)).toBe(false);
       expect(ObjectUtils.isBoolean(undefined)).toBe(false);
       expect(ObjectUtils.isBoolean("test")).toBe(false);
@@ -96,32 +96,32 @@ describe("ObjectUtils", () => {
   });
 
   describe("toSafeString", () => {
-    test("should return empty string for null", () => {
+    test("对null应该返回空字符串", () => {
       expect(ObjectUtils.toSafeString(null)).toBe("");
     });
-    test("should return empty string for undefined", () => {
+    test("对undefined应该返回空字符串", () => {
       expect(ObjectUtils.toSafeString(undefined)).toBe("");
     });
-    test("should return the string for other values", () => {
+    test("对其他值应该返回字符串", () => {
       expect(ObjectUtils.toSafeString("test")).toBe("test");
     });
-    test("should return default value for null", () => {
+    test("对null应该返回默认值", () => {
       expect(ObjectUtils.toSafeString(null, "--")).toBe("--");
     });
-    test("should return default value for undefined", () => {
+    test("对undefined应该返回默认值", () => {
       expect(ObjectUtils.toSafeString(undefined, "--")).toBe("--");
     });
   });
 
   describe("getProperty", () => {
-    test("should return the property value from the object", () => {
+    test("应该从对象中返回属性值", () => {
       const obj = { a: 1, b: 2 };
       expect(ObjectUtils.getProperty(obj, "a")).toBe(1);
     });
   });
 
   describe("setProperty", () => {
-    test("should set the property value in the object", () => {
+    test("应该在对象中设置属性值", () => {
       const obj = { a: 1 };
       ObjectUtils.setProperty(obj, "a", 2);
       expect(obj.a).toBe(2);
@@ -129,74 +129,74 @@ describe("ObjectUtils", () => {
   });
 
   describe("createObject", () => {
-    test("should create an instance of the given type", () => {
+    test("应该创建给定类型的实例", () => {
       class Test {
         constructor(public value: number) {}
       }
       const instance = ObjectUtils.createObject(Test, 10);
       expect(instance.value).toBe(10);
     });
-    test("should create an empty object if the type is null", () => {
+    test("如果类型为null应该创建空对象", () => {
       const instance = ObjectUtils.createObject(null as any) as object;
       expect(Reflect.ownKeys(instance).length).toBe(0);
     });
   });
 
   describe("getPropertyName", () => {
-    test("should return the string representation of the property name", () => {
+    test("应该返回属性名的字符串表示", () => {
       expect(ObjectUtils.getPropertyName("a")).toBe("a");
     });
   });
 
   describe("values", () => {
-    test("should return values of the object", () => {
+    test("应该返回对象的值", () => {
       const obj = { a: 1, b: 2 };
       expect(ObjectUtils.values(obj)).toEqual([1, 2]);
     });
-    test("should return an empty array for null or undefined", () => {
+    test("对null或undefined应该返回空数组", () => {
       expect(ObjectUtils.values(null)).toEqual([]);
       expect(ObjectUtils.values(undefined)).toEqual([]);
     });
   });
 
   describe("getDescendantProperty", () => {
-    test("should return the matching descendant property", () => {
+    test("应该返回匹配的后代属性", () => {
       const obj = { p1: { p2: 1 } };
       expect(ObjectUtils.getDescendantProperty(obj, "p1", "p2")).toBe(1);
     });
-    test("should return undefined for non-existing properties", () => {
+    test("对不存在的属性应该返回undefined", () => {
       const obj = { p1: { p2: 1 } };
       expect(ObjectUtils.getDescendantProperty(obj, "p1", "p3")).toBeUndefined();
     });
-    test("should return the matching descendant property", () => {
+    test("应该返回匹配的后代属性", () => {
       const obj = { p1: { p2: 1 } };
       expect(ObjectUtils.getDescendantProperty(obj.p1.p2)).toBe(1);
     });
-    test("should return undefined for null or undefined", () => {
+    test("对null或undefined应该返回undefined", () => {
       expect(ObjectUtils.getDescendantProperty(undefined)).toBeUndefined();
       expect(ObjectUtils.getDescendantProperty(null)).toBeUndefined();
     });
   });
 
   describe("getOrDefault", () => {
-    test("should return the value if it exists", () => {
-      const value: number = 1;
+    test("如果值存在应该返回该值", () => {
+      const value = 1 as number;
       expect(ObjectUtils.getOrDefault(value, 0)).toBe(1);
     });
-    test("should return default value for null", () => {
+    test("对null应该返回默认值", () => {
       expect(ObjectUtils.getOrDefault(null, 0)).toBe(0);
     });
-    test("should return default value for undefined", () => {
+    test("对undefined应该返回默认值", () => {
       expect(ObjectUtils.getOrDefault(undefined, "1")).toBe("1");
     });
   });
 
   describe("hasValue", () => {
-    test("should return true for non-null and non-undefined values", () => {
+    test("对非null和非undefined值应该返回true", () => {
       expect(ObjectUtils.hasValue(1)).toBe(true);
       expect(ObjectUtils.hasValue("str")).toBe(true);
     });
-    test("should return false for null and undefined", () => {
+    test("对null和undefined应该返回false", () => {
       expect(ObjectUtils.hasValue(undefined)).toBe(false);
       expect(ObjectUtils.hasValue(null)).toBe(false);
     });

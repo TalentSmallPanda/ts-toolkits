@@ -49,3 +49,9 @@ export enum SortOrder {
   ASC = "ASC", // 正序 (ascending)
   DESC = "DESC", // 倒序 (descending)
 }
+
+export enum ChildQueryMode {
+  PARENT_ONLY = "PARENT_ONLY", // 仅检查父项
+  PARENT_AND_CHILD = "PARENT_AND_CHILD", // 父项满足后查询子项
+  CHILD_ONLY = "CHILD_ONLY", // 仅检查子项，子项匹配则返回父项
+}
