@@ -43,6 +43,37 @@ export default class NumberUtils {
   }
 
   /**
+   * 检查值是否可以转换为有效数字（包括数字字符串）。
+   * @param value 要检查的值
+   * @example NumberUtils.isNumeric(123)         = true
+   * @example NumberUtils.isNumeric("123")       = true
+   * @example NumberUtils.isNumeric("1.5")       = true
+   * @example NumberUtils.isNumeric("-100")      = true
+   * @example NumberUtils.isNumeric("abc")       = false
+   * @example NumberUtils.isNumeric("")          = false
+   * @example NumberUtils.isNumeric("  ")        = false
+   * @example NumberUtils.isNumeric(null)        = false
+   * @example NumberUtils.isNumeric(undefined)   = false
+   * @example NumberUtils.isNumeric(NaN)         = false
+   * @example NumberUtils.isNumeric(Infinity)    = false
+   */
+  public static isNumeric(value: any): boolean {
+    if (ObjectUtils.isNullOrUndefined(value)) {
+      return false;
+    }
+    // 排除布尔值
+    if (typeof value === "boolean") {
+      return false;
+    }
+    // 排除空字符串和纯空格字符串
+    if (typeof value === "string" && value.trim() === "") {
+      return false;
+    }
+    // 检查是否为有限数字（isFinite 会自动转换）
+    return isFinite(value);
+  }
+
+  /**
    * 返回一个表示指定数字的固定小数点表示法的字符串
    * @param value 目标值
    * @param fractionDigits 小数点后的位数。必须在0-100范围内（包含）

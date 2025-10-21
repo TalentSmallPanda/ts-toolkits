@@ -10,6 +10,18 @@ export default class RandomUtils {
   private static readonly LOWERCASE_CHARACTERS: string = "abcdefghijklmnopqrstuvwxyz";
 
   /**
+   * 常用姓氏（按人口比例精选50个最常见姓氏）
+   */
+  private static readonly CHINESE_SURNAMES: string =
+    "王李张刘陈杨黄赵周吴徐孙马朱胡郭何林罗高梁郑谢宋唐许韩冯邓曹彭曾肖田董袁潘于蒋蔡余杜叶程苏魏吕丁任沈姜何";
+
+  /**
+   * 常用名字字符（精选适合做名字的常用字）
+   */
+  private static readonly CHINESE_NAME_CHARS: string =
+    "伟芳娜秀敏静丽强磊军洋勇艳杰娟涛明超霞平刚桂英华文波辉丹婷鹏燕玲飞红兰雪梅云鑫宇浩欣怡颖琳雨晨阳薇莎曦云";
+
+  /**
    * 生成指定范围内的随机整数
    * @param min 最小值（默认为0）
    * @param max 最大值（默认为最大安全整数）
@@ -128,6 +140,20 @@ export default class RandomUtils {
   }
 
   /**
+   * 生成随机的中文名字
+   * @returns 随机的中文姓名（如：张伟、李娜）
+   */
+  static getChName(): string {
+    const surname = this.CHINESE_SURNAMES[Math.floor(Math.random() * this.CHINESE_SURNAMES.length)];
+    const nameLength = Math.random() > 0.3 ? 2 : 1;
+    let givenName = "";
+    for (let i = 0; i < nameLength; i++) {
+      givenName += this.CHINESE_NAME_CHARS[Math.floor(Math.random() * this.CHINESE_NAME_CHARS.length)];
+    }
+    return surname + givenName;
+  }
+
+  /**
    * 生成随机英文地址
    * @returns 格式为"门牌号 街道名 St, 城市, 州 邮编"的随机英文地址
    */
@@ -179,5 +205,13 @@ export default class RandomUtils {
     return `${random.slice(0, 8)}-${random.slice(8, 12)}-${random.slice(12, 16)}-${random.slice(16, 20)}-${random.slice(
       20
     )}`;
+  }
+
+  /**
+   * UUID 生成器（别名）
+   * @returns 符合UUID格式的随机字符串
+   */
+  static uuid(): string {
+    return this.getUuid();
   }
 }

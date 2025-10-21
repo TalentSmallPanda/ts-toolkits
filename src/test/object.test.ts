@@ -14,16 +14,16 @@ describe("ObjectUtils", () => {
     });
   });
 
-  describe("isUndefinend", () => {
+  describe("isUndefined", () => {
     test("对undefined应该返回true", () => {
-      expect(ObjectUtils.isUndefinend(undefined)).toBe(true);
+      expect(ObjectUtils.isUndefined(undefined)).toBe(true);
     });
     test("对null应该返回false", () => {
-      expect(ObjectUtils.isUndefinend(null)).toBe(false);
+      expect(ObjectUtils.isUndefined(null)).toBe(false);
     });
     test("对非undefined值应该返回false", () => {
-      expect(ObjectUtils.isUndefinend({})).toBe(false);
-      expect(ObjectUtils.isUndefinend(1)).toBe(false);
+      expect(ObjectUtils.isUndefined({})).toBe(false);
+      expect(ObjectUtils.isUndefined(1)).toBe(false);
     });
   });
 
@@ -74,8 +74,16 @@ describe("ObjectUtils", () => {
   });
 
   describe("isNumber", () => {
-    test("对数字应该返回true", () => {
+    test("对有限数字应该返回true", () => {
       expect(ObjectUtils.isNumber(1)).toBe(true);
+      expect(ObjectUtils.isNumber(0)).toBe(true);
+      expect(ObjectUtils.isNumber(-1)).toBe(true);
+      expect(ObjectUtils.isNumber(1.5)).toBe(true);
+    });
+    test("对NaN和Infinity应该返回false", () => {
+      expect(ObjectUtils.isNumber(NaN)).toBe(false);
+      expect(ObjectUtils.isNumber(Infinity)).toBe(false);
+      expect(ObjectUtils.isNumber(-Infinity)).toBe(false);
     });
     test("对非数字应该返回false", () => {
       expect(ObjectUtils.isNumber(null)).toBe(false);
@@ -87,11 +95,50 @@ describe("ObjectUtils", () => {
   describe("isBoolean", () => {
     test("对布尔值应该返回true", () => {
       expect(ObjectUtils.isBoolean(false)).toBe(true);
+      expect(ObjectUtils.isBoolean(true)).toBe(true);
     });
     test("对非布尔值应该返回false", () => {
       expect(ObjectUtils.isBoolean(null)).toBe(false);
       expect(ObjectUtils.isBoolean(undefined)).toBe(false);
       expect(ObjectUtils.isBoolean("test")).toBe(false);
+    });
+  });
+
+  describe("isFunction", () => {
+    test("对函数应该返回true", () => {
+      expect(ObjectUtils.isFunction(() => {})).toBe(true);
+      expect(ObjectUtils.isFunction(function () {})).toBe(true);
+      expect(ObjectUtils.isFunction(Object)).toBe(true);
+    });
+    test("对非函数应该返回false", () => {
+      expect(ObjectUtils.isFunction(null)).toBe(false);
+      expect(ObjectUtils.isFunction(undefined)).toBe(false);
+      expect(ObjectUtils.isFunction({})).toBe(false);
+    });
+  });
+
+  describe("isPromise", () => {
+    test("对Promise应该返回true", () => {
+      expect(ObjectUtils.isPromise(Promise.resolve())).toBe(true);
+      expect(ObjectUtils.isPromise(new Promise(() => {}))).toBe(true);
+      expect(ObjectUtils.isPromise({ then: () => {} })).toBe(true);
+    });
+    test("对非Promise应该返回false", () => {
+      expect(ObjectUtils.isPromise(null)).toBe(false);
+      expect(ObjectUtils.isPromise(undefined)).toBe(false);
+      expect(ObjectUtils.isPromise({})).toBe(false);
+    });
+  });
+
+  describe("isRegExp", () => {
+    test("对正则表达式应该返回true", () => {
+      expect(ObjectUtils.isRegExp(/test/)).toBe(true);
+      expect(ObjectUtils.isRegExp(new RegExp("test"))).toBe(true);
+    });
+    test("对非正则表达式应该返回false", () => {
+      expect(ObjectUtils.isRegExp(null)).toBe(false);
+      expect(ObjectUtils.isRegExp(undefined)).toBe(false);
+      expect(ObjectUtils.isRegExp("test")).toBe(false);
     });
   });
 
@@ -139,23 +186,6 @@ describe("ObjectUtils", () => {
     test("如果类型为null应该创建空对象", () => {
       const instance = ObjectUtils.createObject(null as any) as object;
       expect(Reflect.ownKeys(instance).length).toBe(0);
-    });
-  });
-
-  describe("getPropertyName", () => {
-    test("应该返回属性名的字符串表示", () => {
-      expect(ObjectUtils.getPropertyName("a")).toBe("a");
-    });
-  });
-
-  describe("values", () => {
-    test("应该返回对象的值", () => {
-      const obj = { a: 1, b: 2 };
-      expect(ObjectUtils.values(obj)).toEqual([1, 2]);
-    });
-    test("对null或undefined应该返回空数组", () => {
-      expect(ObjectUtils.values(null)).toEqual([]);
-      expect(ObjectUtils.values(undefined)).toEqual([]);
     });
   });
 

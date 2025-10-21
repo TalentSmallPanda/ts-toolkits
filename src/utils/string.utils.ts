@@ -1,6 +1,7 @@
 import ArrayUtils from "./array.utils";
 import NumberUtils from "./number.utils";
 import ObjectUtils from "./object.utils";
+import RandomUtils from "./random.utils";
 import { BlankString, Nullable, NullableString } from "./type";
 
 export default class StringUtils {
@@ -235,7 +236,7 @@ export default class StringUtils {
     if (ObjectUtils.isNull(str1) && ObjectUtils.isNull(str2)) {
       return true;
     }
-    if (ObjectUtils.isUndefinend(str1) && ObjectUtils.isUndefinend(str2)) {
+    if (ObjectUtils.isUndefined(str1) && ObjectUtils.isUndefined(str2)) {
       return true;
     }
     return false;
@@ -264,7 +265,7 @@ export default class StringUtils {
     if (ObjectUtils.isNull(str1) && ObjectUtils.isNull(str2)) {
       return true;
     }
-    if (ObjectUtils.isUndefinend(str1) && ObjectUtils.isUndefinend(str2)) {
+    if (ObjectUtils.isUndefined(str1) && ObjectUtils.isUndefined(str2)) {
       return true;
     }
     return false;
@@ -287,11 +288,11 @@ export default class StringUtils {
     if (
       ObjectUtils.isNullOrUndefined(str) ||
       ObjectUtils.isNullOrUndefined(searchStr) ||
-      (!ObjectUtils.isUndefinend(startPos) && !NumberUtils.isSafeInteger(startPos))
+      (!ObjectUtils.isUndefined(startPos) && !NumberUtils.isSafeInteger(startPos))
     ) {
       return this.INDEX_NOT_FOUND;
     }
-    const useStartPos = ObjectUtils.isUndefinend(startPos) ? 0 : startPos;
+    const useStartPos = ObjectUtils.isUndefined(startPos) ? 0 : startPos;
     return str.indexOf(searchStr, useStartPos);
   }
 
@@ -309,11 +310,11 @@ export default class StringUtils {
     if (
       ObjectUtils.isNullOrUndefined(str) ||
       ObjectUtils.isNullOrUndefined(searchStr) ||
-      (!ObjectUtils.isUndefinend(position) && !NumberUtils.isSafeInteger(position))
+      (!ObjectUtils.isUndefined(position) && !NumberUtils.isSafeInteger(position))
     ) {
       return this.INDEX_NOT_FOUND;
     }
-    const usePosition = ObjectUtils.isUndefinend(position) ? str.length - 1 : position;
+    const usePosition = ObjectUtils.isUndefined(position) ? str.length - 1 : position;
     return str.lastIndexOf(searchStr, usePosition);
   }
 
@@ -353,7 +354,7 @@ export default class StringUtils {
     if (
       !ObjectUtils.isString(str) ||
       !NumberUtils.isSafeInteger(start) ||
-      (!ObjectUtils.isUndefinend(end) && !NumberUtils.isSafeInteger(end))
+      (!ObjectUtils.isUndefined(end) && !NumberUtils.isSafeInteger(end))
     ) {
       return null;
     }
@@ -362,7 +363,7 @@ export default class StringUtils {
       return str;
     }
 
-    if (ObjectUtils.isUndefinend(end)) {
+    if (ObjectUtils.isUndefined(end)) {
       return str.substring(start);
     } else {
       return str.substring(start, end);
@@ -431,29 +432,10 @@ export default class StringUtils {
 
   /**
    * 初始化一个新的GUID结构的字符串。
+   * @deprecated 请使用 RandomUtils.uuid() 代替此方法
    */
   public static newGuid(): string {
-    return (
-      this.S4() +
-      this.S4() +
-      "-" +
-      this.S4() +
-      "-" +
-      this.S4() +
-      "-" +
-      this.S4() +
-      "-" +
-      this.S4() +
-      this.S4() +
-      this.S4()
-    );
-  }
-
-  /**
-   * 生成一个4位的16进制随机数
-   */
-  private static S4() {
-    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    return RandomUtils.uuid();
   }
 
   /**
@@ -515,6 +497,9 @@ export default class StringUtils {
    * @example StringUtils.join(["a", "b", "c"], null)  = "abc"
    * @example StringUtils.join(["a", "b", "c"], "-")  = "a-b-c"
    * @example StringUtils.join([1, 2, 3], "-")  = "1-2-3"
+   * @deprecated 请使用 Array.prototype.join() 代替此方法,下个版本移除此方法
+   * @since 1.0.34 标记为弃用
+   * @removed 1.0.35 计划移除此方法
    */
   public static join<T>(array: T[], separator = "") {
     if (ArrayUtils.isEmpty(array)) {
@@ -538,5 +523,23 @@ export default class StringUtils {
    */
   private static escapeRegExp(str: string): string {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+  }
+
+  /**
+   * 移除字符串中的HTML标签
+   * @param fragment HTML片段
+   * @returns 移除HTML标签后的文本
+   * @example StringUtils.removeTag("<p>Hello <b>world</b>!</p>") = "Hello world!"
+   * @example StringUtils.removeTag("<p>Hello <b>world</b>!</p><script>alert('hello');</script>") = "Hello world!alert('hello');"
+   */
+  public static removeTag(fragment: string): string {
+    if (this.isEmpty(fragment)) {
+      return this.EMPTY;
+    }
+    if (typeof DOMParser !== "undefined") {
+      return new DOMParser().parseFromString(fragment, "text/html").body.textContent ?? this.EMPTY;
+    }
+    // Node.js环境的降级方案
+    return fragment.replace(/<[^>]*>/g, "");
   }
 }

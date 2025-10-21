@@ -104,12 +104,20 @@ export default class TreeUtils {
 
   /**
    * 创建具有给定字段和每个层级指定节点数的树结构数据
-   * @param fields 为每个节点创建的字段数组
+   * @param fields 为每个节点创建的字段数组，支持多种类型：
+   *   - 字符串: "id" → 生成 "id_0_1" 格式
+   *   - 数字对象: { age: 0 } → 生成随机整数
+   *   - 小数对象: { price: 0.0 } → 生成随机浮点数
+   *   - 布尔对象: { active: true } → 生成随机布尔值
+   *   - 特殊字符串: { email: "email" } → 生成随机邮箱
+   *   - 支持的特殊类型: uuid, email, img, name, address, phone, color, cnName
    * @param maxLevel 树结构数据的最大层级
    * @param num 每个层级上的节点数量
    * @param depth 树结构数据的当前层级
    * @param idxs 父节点的索引数组
    * @return 生成的树结构数据
+   * @example
+   * TreeUtils.createTree(['id', { age: 0 }, { email: 'email' }, { phone: 'phone' }], 2, 5)
    */
   public static createTree<T extends [FieldItem, ...FieldItem[]]>(
     fields = ["id"] as unknown as T,
@@ -130,40 +138,77 @@ export default class TreeUtils {
             obj[field] = `${field}_${uniStr}`;
           } else if (field !== null && typeof field === "object") {
             const [fieldName, fieldValue] = Object.entries(field)[0];
-            let val: unknown;
-            if (typeof fieldValue === "number") {
-              if (Number.isInteger(fieldValue)) {
-                val = RandomUtils.getInt();
-              } else {
-                const decimalPlaces = (fieldValue.toString().split(".")[1] || "").length; // 获取小数位数
-                const precision = decimalPlaces > 0 ? decimalPlaces : 2;
-                val = RandomUtils.getFloat(0, 1000, precision);
-              }
-            } else if (typeof fieldValue === "boolean") {
-              val = RandomUtils.getBoolean();
-            } else if (typeof fieldValue === "string") {
-              if (fieldValue === "uuid") {
-                val = RandomUtils.getUuid();
-              } else if (fieldValue === "email") {
-                val = RandomUtils.getEmail();
-              } else if (fieldValue === "img") {
-                val = RandomUtils.getImage();
-              } else if (fieldValue === "name") {
-                val = RandomUtils.getEnName();
-              } else if (fieldValue === "address") {
-                val = RandomUtils.getEnAddress();
-              } else {
-                val = RandomUtils.getString();
-              }
-            } else {
-              val = `${field}_${uniStr}`;
-            }
-            obj[fieldName] = val;
+            obj[fieldName] = this.generateFieldValue(fieldValue, uniStr);
           }
         });
         obj.children = this.createTree(fields, maxLevel, num, depth + 1, indexs);
         return obj;
       });
+  }
+
+  /**
+   * 根据字段值类型生成对应的随机数据
+   * @param fieldValue 字段值，用于推断数据类型
+   * @param uniStr 唯一标识符字符串
+   * @returns 生成的字段值
+   * @private
+   */
+  private static generateFieldValue(fieldValue: any, uniStr: string): unknown {
+    if (typeof fieldValue === "number") {
+      return this.generateNumberValue(fieldValue);
+    } else if (typeof fieldValue === "boolean") {
+      return RandomUtils.getBoolean();
+    } else if (typeof fieldValue === "string") {
+      return this.generateStringValue(fieldValue);
+    }
+    return `${fieldValue}_${uniStr}`;
+  }
+
+  /**
+   * 生成数字类型的随机值
+   * @param fieldValue 数字值，用于判断是整数还是浮点数
+   * @returns 生成的随机数字
+   * @private
+   */
+  private static generateNumberValue(fieldValue: number): number {
+    if (Number.isInteger(fieldValue)) {
+      return RandomUtils.getInt();
+    } else {
+      const decimalPlaces = (fieldValue.toString().split(".")[1] || "").length;
+      const precision = decimalPlaces > 0 ? decimalPlaces : 2;
+      return RandomUtils.getFloat(0, 1000, precision);
+    }
+  }
+
+  /**
+   * 根据字符串标识生成对应的随机数据
+   * @param fieldValue 字符串标识，指定要生成的数据类型
+   * @returns 生成的随机数据
+   * @private
+   */
+  private static generateStringValue(fieldValue: string): string {
+    switch (fieldValue) {
+      case "uuid":
+        return RandomUtils.getUuid();
+      case "email":
+        return RandomUtils.getEmail();
+      case "img":
+        return RandomUtils.getImage();
+      case "name":
+        return RandomUtils.getChName();
+      case "address":
+        return RandomUtils.getEnAddress();
+      case "phone":
+        return RandomUtils.getPhone();
+      case "color":
+        return RandomUtils.getColor();
+      case "cnName":
+        return RandomUtils.getChName();
+      case "enName":
+        return RandomUtils.getEnName();
+      default:
+        return RandomUtils.getString();
+    }
   }
 
   /**
@@ -181,21 +226,23 @@ export default class TreeUtils {
     key?: typeof expands extends number ? never : keyof T
   ): T[] {
     const newSortRows: T[] = [];
+    const expandSets = Array.isArray(expands) ? new Set(expands) : null;
+    const maxLevel = typeof expands === "number" ? expands : -1;
+
     const loop = (array: T[], depth = TreeLevel.One) => {
-      while (ArrayUtils.isNotEmpty(array)) {
-        const item = array.shift() as any;
+      for (let i = 0; i < array.length; i++) {
+        const item = array[i] as any;
         let shouldExpand = false;
-        if (Array.isArray(expands)) {
-          const expandSets = new Set(expands);
+        if (expandSets) {
           shouldExpand = expandSets.has(item[key]);
         } else {
-          shouldExpand = depth <= expands;
+          shouldExpand = depth <= maxLevel;
         }
         item[expandField ?? "_expanded"] = shouldExpand;
         newSortRows.push(item);
         if (shouldExpand && ArrayUtils.isNotEmpty(item.children)) {
           const children: T[] = item.children;
-          loop(children.slice(), depth + 1);
+          loop(children, depth + 1);
         }
       }
     };

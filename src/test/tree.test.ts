@@ -169,7 +169,8 @@ describe("TreeUtils", () => {
       const result = TreeUtils.createTree(
         [
           "id",
-          { name: "name" },
+          { enName: "enName" },
+          { chName: "chName" },
           { address: "address" },
           { img: "img" },
           { uuid: "uuid" },

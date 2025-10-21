@@ -444,4 +444,28 @@ describe("StringUtils", () => {
       expect(StringUtils.stripToEmpty("1-2-3")).toBe("1-2-3");
     });
   });
+
+  // 26. removeTag 测试
+  describe("removeTag", () => {
+    test("应该移除HTML标签", () => {
+      expect(StringUtils.removeTag("<p>Hello <b>world</b>!</p>")).toBe("Hello world!");
+    });
+    test("应该移除HTML标签和脚本代码", () => {
+      expect(StringUtils.removeTag("<p>Hello <b>world</b>!</p><script>alert('hello');</script>")).toBe(
+        "Hello world!alert('hello');"
+      );
+    });
+    test("应该移除所有HTML标签", () => {
+      expect(StringUtils.removeTag("<div><span>Test</span></div>")).toBe("Test");
+    });
+    test("应该处理自闭合标签", () => {
+      expect(StringUtils.removeTag("<img src='test.jpg' />")).toBe("");
+    });
+    test("应该处理空HTML", () => {
+      expect(StringUtils.removeTag("")).toBe("");
+    });
+    test("应该处理纯文本", () => {
+      expect(StringUtils.removeTag("Hello world")).toBe("Hello world");
+    });
+  });
 });

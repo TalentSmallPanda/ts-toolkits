@@ -229,4 +229,36 @@ describe("RandomUtils", () => {
       }
     });
   });
+
+  describe("getChName", () => {
+    it("应生成有效的中文名字（2-3个字）", () => {
+      const result = RandomUtils.getChName();
+      // 检查格式：中文字符，2-3个字
+      expect(result).toMatch(/^[\u4e00-\u9fa5]{2,3}$/);
+    });
+
+    it("姓氏和名字应该在常用字符列表中", () => {
+      const surnames =
+        "王李张刘陈杨黄赵周吴徐孙马朱胡郭何林罗高梁郑谢宋唐许韩冯邓曹彭曾肖田董袁潘于蒋蔡余杜叶程苏魏吕丁任沈";
+      const nameChars =
+        "伟芳娜秀敏静丽强磊军洋勇艳杰娟涛明超霞平刚桂英华文波辉丹婷鹏燕玲飞红兰雪梅云鑫宇浩欣怡颖琳雨晨阳薇";
+
+      const result = RandomUtils.getChName();
+      expect(surnames).toContain(result[0]); // 姓氏
+
+      const givenName = result.slice(1);
+      for (const char of givenName) {
+        expect(nameChars).toContain(char); // 名字
+      }
+    });
+
+    it("应该生成多样化的名字", () => {
+      const names = new Set<string>();
+      for (let i = 0; i < 50; i++) {
+        names.add(RandomUtils.getChName());
+      }
+      // 50个名字应该有较高的唯一性（至少40个不同）
+      expect(names.size).toBeGreaterThanOrEqual(40);
+    });
+  });
 });

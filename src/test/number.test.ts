@@ -38,6 +38,44 @@ describe("NumberUtils", () => {
     });
   });
 
+  describe("isNumeric", () => {
+    test("对数字应该返回true", () => {
+      expect(NumberUtils.isNumeric(123)).toBe(true);
+      expect(NumberUtils.isNumeric(0)).toBe(true);
+      expect(NumberUtils.isNumeric(-1)).toBe(true);
+      expect(NumberUtils.isNumeric(1.5)).toBe(true);
+    });
+
+    test("对数字字符串应该返回true", () => {
+      expect(NumberUtils.isNumeric("123")).toBe(true);
+      expect(NumberUtils.isNumeric("0")).toBe(true);
+      expect(NumberUtils.isNumeric("-100")).toBe(true);
+      expect(NumberUtils.isNumeric("1.5")).toBe(true);
+    });
+
+    test("对非数字字符串应该返回false", () => {
+      expect(NumberUtils.isNumeric("abc")).toBe(false);
+      expect(NumberUtils.isNumeric("")).toBe(false);
+      expect(NumberUtils.isNumeric("  ")).toBe(false);
+    });
+
+    test("对NaN和Infinity应该返回false", () => {
+      expect(NumberUtils.isNumeric(NaN)).toBe(false);
+      expect(NumberUtils.isNumeric(Infinity)).toBe(false);
+      expect(NumberUtils.isNumeric(-Infinity)).toBe(false);
+    });
+
+    test("对布尔值应该返回false", () => {
+      expect(NumberUtils.isNumeric(true)).toBe(false);
+      expect(NumberUtils.isNumeric(false)).toBe(false);
+    });
+
+    test("对null和undefined应该返回false", () => {
+      expect(NumberUtils.isNumeric(null)).toBe(false);
+      expect(NumberUtils.isNumeric(undefined)).toBe(false);
+    });
+  });
+
   describe("toFixed", () => {
     test("对null应该返回默认值", () => {
       expect(NumberUtils.toFixed(null, 2, "default")).toBe("default");

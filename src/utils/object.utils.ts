@@ -6,7 +6,7 @@ export default class ObjectUtils {
    * 检查值是否为 null。
    * @param value 要检查的值
    * @example ObjectUtils.isNull(null)        = true
-   * @example ObjectUtils.isNull(undefinend)  = false
+   * @example ObjectUtils.isNull(undefined)   = false
    * @example ObjectUtils.isNull({})          = false
    * @example ObjectUtils.isNull(1)           = false
    */
@@ -17,25 +17,25 @@ export default class ObjectUtils {
   /**
    * 检查值是否为 undefined。
    * @param value 要检查的值
-   * @example ObjectUtils.isUndefinend(undefinend)  = true
-   * @example ObjectUtils.isUndefinend(null)        = false
-   * @example ObjectUtils.isUndefinend({})          = false
-   * @example ObjectUtils.isUndefinend(1)           = false
+   * @example ObjectUtils.isUndefined(undefined)   = true
+   * @example ObjectUtils.isUndefined(null)        = false
+   * @example ObjectUtils.isUndefined({})          = false
+   * @example ObjectUtils.isUndefined(1)           = false
    */
-  public static isUndefinend(value: any): value is undefined {
+  public static isUndefined(value: any): value is undefined {
     return typeof value === "undefined";
   }
 
   /**
    * 检查值是否为 null 或 undefined。
    * @param value 要检查的值
-   * @example ObjectUtils.isNullOrUndefined(undefinend)  = true
+   * @example ObjectUtils.isNullOrUndefined(undefined)   = true
    * @example ObjectUtils.isNullOrUndefined(null)        = true
    * @example ObjectUtils.isNullOrUndefined({})          = false
    * @example ObjectUtils.isNullOrUndefined(1)           = false
    */
   public static isNullOrUndefined(value: any): value is Nullable {
-    return this.isNull(value) || this.isUndefinend(value);
+    return this.isNull(value) || this.isUndefined(value);
   }
 
   /**
@@ -43,7 +43,7 @@ export default class ObjectUtils {
    * @param value 要检查的值
    * @example ObjectUtils.isArray([])           = true
    * @example ObjectUtils.isArray(null)         = false
-   * @example ObjectUtils.isArray(undefinend)   = false
+   * @example ObjectUtils.isArray(undefined)    = false
    * @example ObjectUtils.isArray(1)            = false
    */
   public static isArray(value: any): value is Array<any> {
@@ -55,7 +55,7 @@ export default class ObjectUtils {
    * @param value 要检查的值
    * @example ObjectUtils.isDate(new Date())   = true
    * @example ObjectUtils.isDate(null)         = false
-   * @example ObjectUtils.isDate(undefinend)   = false
+   * @example ObjectUtils.isDate(undefined)    = false
    * @example ObjectUtils.isDate(1)            = false
    */
   public static isDate(value: any): value is Date {
@@ -67,7 +67,7 @@ export default class ObjectUtils {
    * @param value 要检查的值
    * @example ObjectUtils.isString("test")       = true
    * @example ObjectUtils.isString(null)         = false
-   * @example ObjectUtils.isString(undefinend)   = false
+   * @example ObjectUtils.isString(undefined)    = false
    * @example ObjectUtils.isString(1)            = false
    */
   public static isString(value: any): value is string {
@@ -75,15 +75,18 @@ export default class ObjectUtils {
   }
 
   /**
-   * 检查值是否为数字。
+   * 检查值是否为有限数字（排除 NaN 和 Infinity）。
    * @param value 要检查的值
    * @example ObjectUtils.isNumber(1)            = true
+   * @example ObjectUtils.isNumber(1.5)          = true
+   * @example ObjectUtils.isNumber(NaN)          = false
+   * @example ObjectUtils.isNumber(Infinity)     = false
    * @example ObjectUtils.isNumber(null)         = false
-   * @example ObjectUtils.isNumber(undefinend)   = false
+   * @example ObjectUtils.isNumber(undefined)    = false
    * @example ObjectUtils.isNumber("test")       = false
    */
   public static isNumber(value: any): value is number {
-    return typeof value === "number";
+    return typeof value === "number" && isFinite(value);
   }
 
   /**
@@ -91,11 +94,51 @@ export default class ObjectUtils {
    * @param value 要检查的值
    * @example ObjectUtils.isBoolean(false)        = true
    * @example ObjectUtils.isBoolean(null)         = false
-   * @example ObjectUtils.isBoolean(undefinend)   = false
+   * @example ObjectUtils.isBoolean(undefined)    = false
    * @example ObjectUtils.isBoolean("test")       = false
    */
   public static isBoolean(value: any): value is boolean {
     return typeof value === "boolean";
+  }
+
+  /**
+   * 检查值是否为函数。
+   * @param value 要检查的值
+   * @example ObjectUtils.isFunction(() => {})    = true
+   * @example ObjectUtils.isFunction(function(){}) = true
+   * @example ObjectUtils.isFunction(null)        = false
+   * @example ObjectUtils.isFunction(undefined)   = false
+   * @example ObjectUtils.isFunction({})          = false
+   */
+  public static isFunction(value: any): value is Function {
+    return typeof value === "function";
+  }
+
+  /**
+   * 检查值是否为 Promise。
+   * @param value 要检查的值
+   * @example ObjectUtils.isPromise(Promise.resolve()) = true
+   * @example ObjectUtils.isPromise(new Promise(() => {})) = true
+   * @example ObjectUtils.isPromise({ then: () => {} }) = true
+   * @example ObjectUtils.isPromise(null)         = false
+   * @example ObjectUtils.isPromise(undefined)    = false
+   * @example ObjectUtils.isPromise({})           = false
+   */
+  public static isPromise(value: any): value is Promise<any> {
+    return value instanceof Promise || (!this.isNullOrUndefined(value) && typeof value.then === "function");
+  }
+
+  /**
+   * 检查值是否为正则表达式。
+   * @param value 要检查的值
+   * @example ObjectUtils.isRegExp(/test/)       = true
+   * @example ObjectUtils.isRegExp(new RegExp('test')) = true
+   * @example ObjectUtils.isRegExp(null)         = false
+   * @example ObjectUtils.isRegExp(undefined)    = false
+   * @example ObjectUtils.isRegExp("test")       = false
+   */
+  public static isRegExp(value: any): value is RegExp {
+    return value instanceof RegExp;
   }
 
   /**
@@ -147,26 +190,6 @@ export default class ObjectUtils {
   }
 
   /**
-   * 获取属性的名称。
-   * @param key 键名
-   */
-  public static getPropertyName<T>(key: keyof T): string {
-    return key.toString();
-  }
-
-  /**
-   * 获取对象的所有属性值。
-   * @param obj 目标对象
-   */
-  public static values(obj: any): any[] {
-    if (this.isNullOrUndefined(obj)) {
-      return [];
-    }
-
-    return Object.keys(obj).map((key) => obj[key]);
-  }
-
-  /**
    * 获取匹配的后代属性。
    * @param obj 目标对象
    * @param descendantPaths 后代路径
@@ -200,10 +223,10 @@ export default class ObjectUtils {
    * 如果值为 null 或 undefined 则返回默认值，否则返回原值。
    * @param value 要检查的值
    * @param defaultValue 默认值
-   * @example ObjectUtils.getOrDefault<number | undefined>(1, 0)            = "1"
-   * @example ObjectUtils.getOrDefault<number | undefined>(undefined, 0)    = "0"
-   * @example ObjectUtils.getOrDefault<number | null>(1, 0)                 = "1"
-   * @example ObjectUtils.getOrDefault<number | null>(null, 0)              = "0"
+   * @example ObjectUtils.getOrDefault<number | undefined>(1, 0)            = 1
+   * @example ObjectUtils.getOrDefault<number | undefined>(undefined, 0)    = 0
+   * @example ObjectUtils.getOrDefault<number | null>(1, 0)                 = 1
+   * @example ObjectUtils.getOrDefault<number | null>(null, 0)              = 0
    */
   public static getOrDefault<T>(value: T | null | undefined, defaultValue: NonNullable<T>): NonNullable<T> {
     if (!this.isNullOrUndefined(value)) {
