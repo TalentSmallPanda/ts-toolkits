@@ -1,13 +1,13 @@
-import * as path from "path";
-import * as fs from "fs";
-import peerDepsExternal from "rollup-plugin-peer-deps-external";
-import resolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
-import typescript from "rollup-plugin-typescript2";
-import json from "@rollup/plugin-json";
 import babel from "@rollup/plugin-babel";
+import commonjs from "@rollup/plugin-commonjs";
+import json from "@rollup/plugin-json";
+import resolve from "@rollup/plugin-node-resolve";
+import * as fs from "fs";
+import * as path from "path";
 import dts from "rollup-plugin-dts";
+import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import { terser } from "rollup-plugin-terser";
+import typescript from "rollup-plugin-typescript2";
 
 // 入口
 const entry = "src/index.ts";
@@ -42,14 +42,35 @@ const externalConfig = [(id) => /\/__expample__|main.tsx/.test(id), "**/node_mod
 
 const esmOutput = {
   preserveModules: true,
-  dir: "dist/",
+  dir: "dist/es",
   format: "es",
+  preserveModulesRoot: "src",
+  entryFileNames: (chunkInfo) => {
+    if (chunkInfo.name.includes("rollupPluginBabelHelpers")) {
+      return "_internal/babel.js";
+    }
+    if (chunkInfo.name.includes("_virtual")) {
+      return chunkInfo.name.replace("_virtual/", "_internal/") + ".js";
+    }
+
+    return "[name].js";
+  },
 };
 
 const cjsOutput = {
   preserveModules: true,
-  dir: "dist/",
+  dir: "dist/lib",
   format: "cjs",
+  preserveModulesRoot: "src",
+  entryFileNames: (chunkInfo) => {
+    if (chunkInfo.name.includes("rollupPluginBabelHelpers")) {
+      return "_internal/babel.js";
+    }
+    if (chunkInfo.name.includes("_virtual")) {
+      return chunkInfo.name.replace("_virtual/", "_internal/") + ".js";
+    }
+    return "[name].js";
+  },
 };
 
 const umdOutput = {
