@@ -1,10 +1,19 @@
 {
   "name": "ts-toolkits",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "description": "Common typescript toolkits",
-  "main": "dist/lib/index.js",
-  "module": "dist/es/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/lib/index.js",
+  "module": "./dist/es/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/es/index.js",
+      "require": "./dist/lib/index.js"
+    },
+    "./*": "./dist/*"
+  },
+  "sideEffects": false,
   "files": [
     "dist"
   ],

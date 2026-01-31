@@ -1,4 +1,4 @@
-import { ChildQueryMode, Operator } from "..";
+import { ChildQueryMode, Operator } from "./enum";
 import { BaseCondition, Condition, ConditionGroup, Logic, QueryChunkOps } from "./type";
 
 export default class QueryUtils {

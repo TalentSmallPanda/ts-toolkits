@@ -1,4 +1,7 @@
-import { ArrayUtils, IsLast, IsVisible, ObjectUtils, RandomUtils, TreeLevel } from "..";
+import ArrayUtils from "./array.utils";
+import { IsLast, IsVisible, TreeLevel } from "./enum";
+import ObjectUtils from "./object.utils";
+import RandomUtils from "./random.utils";
 import { BaseTreeData, BaseTreeItem, FieldItem, ListToTreeOps, MergeFields, TreeItem, UpdateOperation } from "./type";
 
 export default class TreeUtils {
@@ -43,63 +46,108 @@ export default class TreeUtils {
    * @param hasUniKey 是否生成唯一键
    * @param childField 子节点字段名
    * @param isFlat 是否扁平化
-   * @param array 结果数组
-   * @param depth 当前深度
-   * @param idxs 索引数组
-   * @param lastArray 节点是否为最后一个的标记数组
-   * @param visible 节点是否可见
-   * @returns 初始化后的树结构数据
    */
   public static init<T>(
     list: T[],
     expandLevel = -1,
     hasUniKey = false,
     childField: keyof T,
-    isFlat = false,
-    array: TreeItem<T>[] = [],
-    depth = TreeLevel.One,
-    idxs: number[] = [],
-    lastArray: number[] = [],
-    visible = IsVisible.Y
+    isFlat = false
   ): TreeItem<T>[] {
-    const length = list.length;
-    for (let index = 0; index < length; index++) {
-      const item = list[index] as TreeItem<T>;
-      const indexs = idxs.concat([index]);
-      const isLast = index === length - 1;
-      const curLtArray = lastArray.concat([isLast ? IsLast.T : IsLast.F]);
-      item._idxs = indexs;
-      item._level = depth;
-      item._visible = visible;
-      item._expanded = depth <= expandLevel;
-      item._isFather = ArrayUtils.isNotEmpty(item[childField]);
-      item._lastArray = curLtArray;
-      if (hasUniKey) {
-        item._uniKey = indexs.join("-");
+    const len = list?.length;
+    if (!len) {
+      return [];
+    }
+
+    const result: TreeItem<T>[] = [];
+
+    const MAX_DEPTH = 1024;
+    const stackL = new Array<T[]>(MAX_DEPTH);
+    const stackI = new Int32Array(MAX_DEPTH);
+    const stackD = new Int16Array(MAX_DEPTH);
+    const stackV = new Int8Array(MAX_DEPTH);
+    const stackPIdx = new Array<number[]>(MAX_DEPTH);
+    const stackPLast = new Array<number[]>(MAX_DEPTH);
+
+    const stackPK = hasUniKey ? new Array<string>(MAX_DEPTH) : null;
+
+    let top = 0;
+    stackL[top] = list;
+    stackI[top] = 0;
+    stackD[top] = TreeLevel.One;
+    stackV[top] = 1;
+    stackPIdx[top] = [];
+    stackPLast[top] = [];
+
+    if (stackPK) {
+      stackPK[top] = "";
+    }
+
+    while (top >= 0) {
+      const l = stackL[top];
+      const i = stackI[top];
+      const d = stackD[top];
+      const v = stackV[top] === 1 ? IsVisible.Y : IsVisible.N;
+      const pIdx = stackPIdx[top];
+      const pLast = stackPLast[top];
+
+      if (i >= l.length) {
+        top--;
+        continue;
       }
+
+      const item = l[i] as TreeItem<T>;
+      const isLast = i === l.length - 1;
+      const children = item[childField] as TreeItem<T>[];
+      if (!isFlat && !ObjectUtils.hasValue(children)) {
+        item[childField] = [] as TreeItem<T>[keyof T];
+      }
+
+      item._idxs = pIdx.concat(i);
+      item._level = d;
+      item._visible = v;
+      item._expanded = d <= expandLevel;
+      item._lastArray = pLast.concat(isLast ? IsLast.T : IsLast.F);
+
+      const hasChildren = ArrayUtils.isNotEmpty(children);
+      item._isFather = hasChildren;
+
+      if (stackPK) {
+        const pKey = stackPK[top];
+        item._uniKey = pKey === "" ? `${i}` : `${pKey}-${i}`;
+      }
+
       if (isFlat) {
-        array.push(item);
+        result.push(item);
       }
-      const childList = ArrayUtils.isNotEmpty(item[childField])
-        ? this.init(
-            item[childField],
-            expandLevel,
-            hasUniKey,
-            childField,
-            isFlat,
-            isFlat ? array : [],
-            depth + 1,
-            indexs,
-            curLtArray,
-            item._expanded ? IsVisible.Y : IsVisible.N
-          )
-        : [];
-      if (!isFlat) {
-        item.children = childList;
-        array.push(item);
+
+      stackI[top]++;
+
+      if (hasChildren) {
+        const nextTop = top + 1;
+
+        if (nextTop < MAX_DEPTH) {
+          const nextVisible = v === IsVisible.Y && item._expanded ? 1 : 0;
+
+          stackL[nextTop] = children;
+          stackI[nextTop] = 0;
+          stackD[nextTop] = d + 1;
+          stackV[nextTop] = nextVisible;
+          stackPIdx[nextTop] = item._idxs;
+          stackPLast[nextTop] = item._lastArray;
+
+          if (stackPK) {
+            stackPK[nextTop] = item._uniKey || "";
+          }
+
+          top = nextTop;
+        } else {
+          console.error(`[TreeInit] 栈溢出：深度超过 ${MAX_DEPTH}。`);
+        }
       }
     }
-    return array;
+
+    return isFlat ? result : (list as TreeItem<T>[]);
   }
 
   /**
@@ -251,58 +299,93 @@ export default class TreeUtils {
   }
 
   /**
-   * 将列表转换为树结构
+   * 将扁平数组转换为树形结构
    * @param list 待转换的列表数据
    * @param parentKey 父节点的键值
    * @param ops 转换操作的配置选项
    * @returns 转换后的树结构数据
    */
-  public static handleListToTree<T>(
-    list: T[],
-    parentKey: string | number | undefined | null,
-    ops: ListToTreeOps<T>
-  ): BaseTreeData<T>[] {
-    if (!ObjectUtils.isArray(list) || (ObjectUtils.isNumber(ops.maxLevel) && ops.maxLevel < 0)) {
+  public static handleListToTree<T>(list: T[], parentKey: T[keyof T], ops: ListToTreeOps<T>): BaseTreeData<T>[] {
+    const len = list?.length;
+    if (!len || (typeof ops.maxLevel === "number" && ops.maxLevel < 0)) {
       return [];
     }
-    if (ArrayUtils.isEmpty(list)) {
-      return [];
-    }
+
+    const { keyField, parentKeyField, maxLevel } = ops;
+    const limit = typeof maxLevel === "number" ? Math.floor(maxLevel) : Infinity;
+
     const nodeMap = new Map<T[keyof T], BaseTreeData<T>>();
-    for (const item of list) {
-      const uniqueId = item[ops.keyField];
-      nodeMap.set(uniqueId, Object.assign({}, item, { children: [] }));
+    const rootNodes: BaseTreeData<T>[] = [];
+
+    for (let i = 0; i < len; i++) {
+      const item = list[i] as BaseTreeData<T>;
+      item.children = [];
+      item._d = -1;
+      nodeMap.set(item[keyField], item);
     }
-    const array: BaseTreeData<T>[] = [];
-    for (const item of list) {
-      const parentId = item[ops.parentKeyField];
-      const uniqueId = item[ops.keyField];
-      const node = nodeMap.get(uniqueId)!;
-      if (parentId === parentKey) {
-        array.push(node);
+
+    for (let i = 0; i < len; i++) {
+      const item = list[i] as BaseTreeData<T>;
+      const pid = item[parentKeyField];
+      const isRoot = pid === parentKey;
+
+      if (isRoot) {
+        item._d = 0;
+        if (item._d <= limit) {
+          rootNodes.push(item);
+        }
       } else {
-        const parentNode = nodeMap.get(parentId)!;
-        parentNode.children.push(node);
+        if (item._d === -1) {
+          this.resolveDepthIterative(item, nodeMap, parentKey, parentKeyField);
+        }
+
+        const parentNode = nodeMap.get(pid);
+        // 安全挂载：父节点存在 && 自身深度已计算 && 未超限
+        // (注：resolveDepthIterative 可能因为断头路导致 _d 依然算不对，或者循环引用，这里做一个 _d !== -1 的检查更稳健)
+        if (parentNode && item._d !== -1 && item._d <= limit) {
+          parentNode.children.push(item);
+        }
       }
     }
-    if (ObjectUtils.isNumber(ops.maxLevel)) {
-      this.handleListDepth(array, Math.floor(ops.maxLevel), 0);
-    }
-    return array;
+
+    return rootNodes;
   }
 
   /**
-   * 处理列表深度，限制树的最大层级
-   * @param list 树结构数据
-   * @param maxLevel 最大层级
-   * @param depth 当前深度
-   * @returns 处理后的树结构数据
+   * 迭代式深度计算（带循环引用检测）
+   * @param startNode 开始节点
+   * @param map 节点映射
+   * @param rootKey 根节点键值
+   * @param pField 父节点键名
    */
-  private static handleListDepth<T>(list: BaseTreeData<T>[], maxLevel: number, depth: number): BaseTreeData<T>[] {
-    for (const item of list) {
-      item.children = depth < maxLevel ? this.handleListDepth(item.children, maxLevel, depth + 1) : [];
+  private static resolveDepthIterative<T>(
+    startNode: BaseTreeData<T>,
+    map: Map<T[keyof T], BaseTreeData<T>>,
+    rootKey: T[keyof T],
+    pField: keyof T
+  ): void {
+    const path: BaseTreeData<T>[] = [];
+    const pathSet = new Set<BaseTreeData<T>>();
+    let curr: BaseTreeData<T> | undefined = startNode;
+
+    while (ObjectUtils.hasValue(curr) && curr._d === -1 && curr[pField] !== rootKey) {
+      if (pathSet.has(curr)) {
+        curr = undefined;
+        break;
+      }
+      pathSet.add(curr);
+      path.push(curr);
+
+      const pid = curr[pField];
+      curr = map.get(pid);
     }
-    return list;
+
+    let depth = curr && curr._d !== -1 ? curr._d : 0;
+
+    while (path.length > 0) {
+      const node = path.pop()!;
+      node._d = ++depth;
+    }
   }
 
   /**

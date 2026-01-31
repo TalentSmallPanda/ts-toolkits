@@ -10,6 +10,7 @@ export type NullableArray<T> = T[] | undefined | null;
 
 export type BaseTreeData<T> = T & {
   children: BaseTreeData<T>[];
+  _d: number;
 };
 
 export type BaseTreeItem = {

@@ -1,4 +1,4 @@
-import { ArrayUtils } from "..";
+import ArrayUtils from "./array.utils";
 import { Nullable } from "./type";
 
 export default class ObjectUtils {

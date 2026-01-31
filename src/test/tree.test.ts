@@ -258,13 +258,16 @@ describe("TreeUtils", () => {
         { id: "16", name: "4-10-1", pid: "10", job: "运维工程师" },
         { id: "18", name: "4-10-2", pid: "10", job: "运维工程师" },
         { id: "19", name: "4-10-4", pid: "10", job: "运维工程师" },
+        { id: "022", name: "张小亮", pid: "", job: "产品leader" },
+        { id: "023", name: "4-10-4", pid: "022", job: "运维工程师" },
       ];
       const ops: ListToTreeOps<{ id: string; pid: string }> = {
         keyField: "id",
         parentKeyField: "pid",
       };
       const result = TreeUtils.handleListToTree(list, "", ops);
-      expect(result.length).toBe(1);
+      console.log(JSON.stringify(result));
+      expect(result.length).toBe(2);
       expect(result[0].id).toBe("01");
       expect(result[0].children.length).toBe(5);
     });
@@ -288,6 +291,8 @@ describe("TreeUtils", () => {
         { id: "16", name: "4-10-1", pid: "10", job: "运维工程师" },
         { id: "18", name: "4-10-2", pid: "10", job: "运维工程师" },
         { id: "19", name: "4-10-4", pid: "10", job: "运维工程师" },
+        { id: "022", name: "张小亮", pid: "", job: "产品leader" },
+        { id: "023", name: "4-10-4", pid: "022", job: "运维工程师" },
       ];
       const ops: ListToTreeOps<{ id: string; pid: string }> = {
         keyField: "id",
@@ -295,7 +300,7 @@ describe("TreeUtils", () => {
         maxLevel: 0,
       };
       const result = TreeUtils.handleListToTree(list, "", ops);
-      expect(result.length).toBe(1);
+      expect(result.length).toBe(2);
       expect(result[0].id).toBe("01");
       expect(result[0].children?.length).toBe(0);
     });

@@ -1,4 +1,5 @@
-import { ArrayUtils, SortOrder } from "..";
+import ArrayUtils from "./array.utils";
+import { SortOrder } from "./enum";
 import { ComparatorThan, Compare, MergeSortOps, SortKey } from "./type";
 
 export default class SortUtils {
